@@ -37,7 +37,6 @@ header {
 }
 
 .nav-list li:hover:after {
-  /* transform-origin: left; */
   transform: scaleX(1);
 }
 

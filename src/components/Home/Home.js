@@ -220,9 +220,9 @@ const Home = () => {
           {/* ClearVox Logo */}
           <Link to="/" className="navbar-brand">
             <img
-              src="./img/logo/clearvox_word_small.png"
+              src="./img/logo/clearvox_word.png"
               alt="ClearVox Logo"
-              style={{ height: 35, width: "auto" }}
+              style={{ height: 40, width: "auto" }}
             />
           </Link>
 

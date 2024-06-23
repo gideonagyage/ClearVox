@@ -13,6 +13,12 @@
   }
 }
 
+.navbar-brand {
+  border-radius: 10px;
+  background-color: white;
+  padding: 2px 8px;
+}
+
 .nav-list {
   align-items: center;
 }
@@ -53,7 +59,6 @@
 }
 
 .nav-list li:hover:after {
-  transform-origin: left;
   transform: scaleX(1);
 }
 
