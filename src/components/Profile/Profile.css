@@ -1,0 +1,56 @@
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: white;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #ff9900;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #0c007c;
+}
+
+
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: #ff9900
+}
+
+.profile-button {
+    background: #ff9900;
+    border-color: 1px solid #ff9900;
+    color: white;
+    box-shadow: none;
+    border: none
+}
+
+.profile-button:hover {
+    background: white;
+    color: #ff9900;
+    border: 1px solid #ff9900
+}
+
+.profile-button:focus {
+    background: #ff9900;
+    border-color: 1px solid #0c007c;
+    color: white;
+    box-shadow: none
+}
+
+.profile-button:active {
+    background: #0c007c;
+    border-color: 1px solid #ff9900;
+    box-shadow: none
+}
+
+.labels {
+    font-size: 11px
+}

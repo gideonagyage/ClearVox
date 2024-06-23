@@ -1,0 +1,75 @@
+header {
+  background-color: #ffa011d5;
+  color: white;
+  font-size: medium;
+  align-items: center;
+
+  .nav-link {
+    color: white;
+  }
+
+  .nav-link:hover {
+    color: #1E3C70;
+  }
+}
+
+/* Styling Navigation List*/
+.nav-list li {
+  position: relative;
+  font-size: 1.1em;
+  color: #1E3C70;
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: 15px;
+}
+
+.nav-list li::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 3px;
+  width: 100%;
+  height: 4px;
+  background: #1E3C70;
+  border-radius: 6px;
+  transform: scaleX(0);
+  transition: transform 0.5s;
+}
+
+.nav-list li:hover:after {
+  transform-origin: left;
+  transform: scaleX(1);
+}
+
+/* Styling Search Button */
+.search-btn {
+  color: white;
+  width: wrap;
+  height: 45px;
+  background: transparent;
+  border: 2px solid white;
+  border-radius: 10px;
+  outline: none;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 500;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.search-btn:hover {
+  background: #1E3C70;
+  color: #FF9900;
+  border: 2px solid #1E3C70;
+}
+
+.search-input {
+  border-radius: 50px;
+  padding: 10px;
+}
+
+.img-account {
+  height: 40;
+  width: 40;
+  margin: 5px 10px 5px 10px;
+}

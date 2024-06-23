@@ -1,0 +1,101 @@
+body {
+    margin: auto;
+    height: 100vh;
+    overflow: auto;
+    animation: gradient 15s ease infinite;
+    background-size: 400% 400%;
+    background-attachment: fixed;
+    position: relative;
+    top: 0;
+    left: 0;
+    color: white;
+}
+
+h1 {
+    text-transform: capitalize;
+    font-family: 'Kanit', sans-serif;
+    background: linear-gradient(130deg, #ffb341, #cf4201);
+    -webkit-background-clip: text;
+    color: transparent;
+    background-clip: text;
+    text-decoration: solid;
+    font-family: "Roboto", sans-serif;
+    font-weight: bold;
+    position: relative;
+    margin: 30px 0 60px;
+    font-weight: 600;
+}
+
+.signin-form a {
+    color: #FF9900;
+}
+
+.signin-form a:hover {
+    text-decoration: underline;
+}
+
+h1::after {
+    display: none;
+}
+
+.container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.btn {
+    margin-top: 10px;
+}
+
+.form-title {
+    padding-left: 20px;
+    padding-right: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center
+}
+
+.btn {
+    width: 70%;
+    margin: 0px 50px 0px 50px;
+    background: transparent;
+    color: white;
+    border-radius: 15px;
+    padding: 8px;
+    background-color: #FF9900;
+    border: 2px solid #FF9900;
+    font-weight: 450;
+}
+
+.btn:hover {
+    background-color: white;
+    color: #FF9900;
+}
+
+.btn-google {
+    width: 70%;
+    margin: 0px 50px 0px 50px;
+    background: transparent;
+    color: blue;
+    border-radius: 15px;
+    padding: 8px;
+    background-color: white;
+    border: 2px solid white;
+    font-weight: 450;
+}
+
+.btn-google img {
+    height: 25px;
+    width: auto;
+    padding-right: 10px;
+}
+
+.btn-google:hover {
+    background-color: blue;
+    border: 2px solid white;
+    color: white;
+}

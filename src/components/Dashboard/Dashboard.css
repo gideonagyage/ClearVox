@@ -1,0 +1,78 @@
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    gap: 15px;
+  }
+  
+  .dashboard-content {
+    display: flex;
+    gap: 20px;
+  }
+
+
+  .card {
+    border: transparent ;
+    align-items: start;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-header {
+    padding: 1rem 1.5rem;
+    font-weight: 700;
+    font-size: small;
+    border-bottom: transparent;
+    border: none;
+    background-color: white;
+    background: white;
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+    border: none;
+  }
+  
+  .card-text {
+    font-size: small;
+  }
+
+
+  .user-info {
+    flex: 1;
+    margin-bottom: 20px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+  }
+  
+  .complaints-section {
+    flex: 2;
+    margin-bottom: 20px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+  }
+  
+  @media (max-width: 768px) { /* Adjust breakpoint as needed */
+    .dashboard-content {
+      display: block; /* Stack sections vertically */
+    }
+  
+    .user-info,
+    .complaints-section {
+      flex: none; /* Remove flex properties */
+    }
+  }
+    
+  .complaints-section ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .complaints-section li {
+    margin-bottom: 10px;
+  }
+  

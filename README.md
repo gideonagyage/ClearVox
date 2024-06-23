@@ -1,70 +1,159 @@
-# Getting Started with Create React App
+<a name="readme-top"></a>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<div align="center">
 
-## Available Scripts
+<img src="./src/img/logo/clearvox_logo_text.png" width="400px" alt="ClearVox Logo" />
 
-In the project directory, you can run:
+</div>
 
-### `npm start`
+<div align="center">
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Your Voice, Heard and Resolved
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+</div>
 
-### `npm test`
+<br>
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## About ClearVox
 
-### `npm run build`
+**ClearVox** *(Clear + Vox (Latin for voice))* is a **Complaint Management System** designed to handle and streamline the process of managing customer complaints.
+It provides a centralized system for receiving, tracking, and resolving customer complaints efficiently and effectively.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The name emphasizes giving customers a clear voice to express their concerns.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Features
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+* **Complaint Submission:** Users can easily submit complaints through a user-friendly interface.
+* **Complaint Tracking:**  Track the status of complaints in real-time, from submission to resolution.
+* **Complaint Categorization:** Organize complaints by category for better analysis and reporting.
+* **Complaint Assignment:** Assign complaints to specific agents or teams for efficient handling.
+* **Communication Management:**  Communicate with customers throughout the complaint resolution process.
+* **Reporting and Analytics:** Generate reports and insights on complaint trends and performance.
 
-### `npm run eject`
+<p align="right"><a href="#readme-top">🔝</a></p>
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Why Choose ClearVox?
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+* **Improved Customer Satisfaction:**  ClearVox empowers you to resolve complaints quickly and efficiently, leading to happier customers.
+* **Enhanced Business Efficiency:**  Streamline your complaint handling process, saving time and resources.
+* **Data-Driven Insights:**  Gain valuable insights into complaint trends to identify areas for improvement.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+<p align="right"><a href="#readme-top">🔝</a></p>
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## ⚛️🔥 Technology Stack
 
-## Learn More
+* **Frontend:** ReactJS
+* **Backend:** Firebase (Firestore, Authentication, Functions)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+<p align="right"><a href="#readme-top">🔝</a></p>
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## ✨ Getting Started
 
-### Code Splitting
+### Prerequisites
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+* Node.js and npm (or yarn) installed on your system.
+* A Firebase project set up.
 
-### Analyzing the Bundle Size
+<p align="right"><a href="#readme-top">🔝</a></p>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### 📝 Installation
 
-### Making a Progressive Web App
+1. Clone the repository:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+   ```bash
+   git clone https://github.com/gideonagyage/clear-vox.git
+   ```
 
-### Advanced Configuration
+2. Navigate to the project directory:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+3. cd clear-vox
 
-### Deployment
+4. Install dependencies:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+    ```bash
+    npm install
+    ```
 
-### `npm run build` fails to minify
+<p align="right"><a href="#readme-top">🔝</a></p>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 🔥 Configure Firebase:
+
+Create a Firebase project in the Firebase console.
+Enable the necessary Firebase services (Firestore, Authentication, Functions).
+Create a .env file in the root directory and add your Firebase configuration:
+
+```javascript
+REACT_APP_FIREBASE_API_KEY = YOUR_API_KEY
+REACT_APP_FIREBASE_AUTH_DOMAIN = YOUR_AUTH_DOMAIN
+REACT_APP_FIREBASE_PROJECT_ID = YOUR_PROJECT_ID
+REACT_APP_FIREBASE_STORAGE_BUCKET = YOUR_STORAGE_BUCKET
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID = YOUR_MESSAGING_SENDER_ID
+REACT_APP_FIREBASE_APP_ID = YOUR_APP_ID
+REACT_APP_FIREBASE_MEASUREMENT_ID = YOUR_MEASUREMENT_ID
+```
+
+<p align="right"><a href="#readme-top">🔝</a></p>
+
+## 🧭 Usage
+
+### Running the Application
+
+Start the development server:
+
+```bash
+npm start
+```
+
+Access the application in your browser at <http://localhost:3000>.
+
+<p align="right"><a href="#readme-top">🔝</a></p>
+
+## 🫂 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository.
+
+2. Create a new branch for your feature or bug fix.
+
+3. Make your changes and commit them.
+
+4. Push your changes to your fork.
+
+5. Submit a pull request to the main repository.
+
+<p align="right"><a href="#readme-top">🔝</a></p>
+
+## 📃 License
+
+This project is licensed under the MIT License.
+
+<p align="right"><a href="#readme-top">🔝</a></p>
+
+## 🙏🏾 Credits
+
+* Bootstrapped with [Create React App](https://github.com/facebook/create-react-app)
+
+* Illustrations from [unDraw](https://undraw.co/)
+
+* Images from [Freepik](https://www.freepik.com/) 
+
+<p align="right"><a href="#readme-top">🔝</a></p>
+
+## ❤️ Thank You
+
+[Generation Ghana](https://ghana.generation.org/)
+
+[Emmauel Kofi Essel](https://github.com/FiifiGenI)
+
+[Roberta Mawunyo Akoto](https://github.com/Mawunyoakoto)
+
+<p align="right"><a href="#readme-top">🔝</a></p>
+
+## 🤙🏾 How to reach me
+
+Feel free to reach out to me on [Linktree](https://linktr.ee/gideonagyage).
+
+[LinkedIn](https://www.linkedin.com/in/gideonagyage)  |  [GitHub](https://github.com/gideonagyage)  |  [Instagram](https://www.instagram.com/gideonagyage)  |  [Facebook](https://www.facebook.com/gideonagyage)  |  [Email](mailto:gideonagyage@gmail.com)
+
+<p align="right"><a href="#readme-top">🔝</a></p>
