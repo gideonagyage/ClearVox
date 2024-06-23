@@ -1,4 +1,5 @@
 import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 
@@ -18,39 +19,26 @@ import ContactMe from "./components/ContactMe/ContactMe";
 
 function App() {
   return (
-    
-    <div className="app-container">
-      
-      <Header />
-
-      {/* Your main content goe here */}
-      <div className="content-wrapper"> 
-
-        <Home />
-
-        <Signing />
-
-        <Profile />
-
-        <Complaint />
-
-        <ComplaintForm />
-
-        <ComplaintList />
-
-        <Dashboard />
-
-        <Error />
-
-        <ContactMe />
-
-        <Loading />
-
-      </div>
-
+    <Router>
+      <div className="app-container">
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Signing />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/contact" element={<ContactMe />} />
+        <Route path="/complaint" element={<ComplaintForm />} />
+        <Route path="/complaint/:id" element={<Complaint />} />
+        <Route path="/complaint-list" element={<ComplaintList />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="*" element={<Error />} />
+        <Route path="/loading" element={<Loading />} />
+        <Route path="/header" element={<Header />} />
+        <Route path="/complaint-form" element={<ComplaintForm />} />
+        <Route path="/contact-me" element={<ContactMe />} />
+      </Routes>
       <Footer />
-
-    </div>
+      </div>
+    </Router>
   );
 }
 
