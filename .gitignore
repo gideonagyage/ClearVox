@@ -8,9 +8,19 @@
 # testing
 /coverage
 
+# workflows
+/.github/workflows
+.github/actions
+.github/schedule
+.github/metrics
+.github/dependabot
+.github/renovate
+
 # firebase
 /src/firebase.js
 /firebase.json
+/firebase-debug.log
+/firebase-debug.log.old
 
 # production
 /build
