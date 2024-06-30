@@ -218,11 +218,12 @@ h2::after {
   bottom: -5px;
 }
 
-.misc .boundary {
-  border: 2px solid #ffb341;
-  border-radius: 20px;
+.misc .card {
+  background: #1703d4;
+  box-shadow: black;
+  border-radius: 25px;
+  padding: 10px;
   margin: 20px auto;
-  padding: 5px;
 }
 
 .misc .feature {
@@ -235,7 +236,7 @@ h2::after {
 .misc .feature-image {
   width: 280px;
   height: 250px;
-  margin: 5px;
+  margin: 2px auto;
 }
 
 .misc p {
@@ -247,7 +248,7 @@ h2::after {
 
 .misc p strong {
   font-weight: 700;
-  font-style: oblique;
+  font-style: normal;
 }
 
 .btn-register {
@@ -340,7 +341,7 @@ col-center {
   padding: 0px 35px 30px;
   border: 2px solid #ff9900;
   border-radius: 20px;
-  width: 70%;
+  max-width: 80%;
   overflow-y: auto;
   overflow-x: auto;
 }

@@ -1,5 +1,5 @@
 header {
-  background-color: #ffa011d5;
+  background-color: #ff9900;
   color: white;
   font-size: medium;
   align-items: center;
@@ -14,7 +14,7 @@ header {
 }
 
 /* Styling Navigation List*/
-.nav-list li {
+.head-nav-list li {
   position: relative;
   font-size: 1.1em;
   color: #1E3C70;
@@ -23,7 +23,7 @@ header {
   margin-left: 15px;
 }
 
-.nav-list li::after {
+.head-nav-list li::after {
   content: "";
   position: absolute;
   left: 0;
@@ -36,7 +36,7 @@ header {
   transition: transform 0.5s;
 }
 
-.nav-list li:hover:after {
+.head-nav-list li:hover:after {
   transform: scaleX(1);
 }
 
@@ -71,4 +71,6 @@ header {
   height: 40;
   width: 40;
   margin: 5px 10px 5px 10px;
+  cursor: pointer;
+  border-color: 20px solid white;
 }

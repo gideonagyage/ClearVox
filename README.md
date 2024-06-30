@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<img src="./src/img/logo/clearvox_logo_text.png" width="400px" alt="ClearVox Logo" />
+<img src="./src/img/logo/clearvox_logo_text.png" height="250px" alt="ClearVox Logo" />
 
 </div>
 

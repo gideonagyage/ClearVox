@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import Modal from "../Modal/Modal";
 
 import "./Footer.css";
 
@@ -71,7 +72,9 @@ const Footer = () => {
   // Close the modal
   const closeModal = () => {
     setShowModal(false);
+    console.log("Closed the Modal")
   };
+
 
   return (
     <footer className="footer">
@@ -189,17 +192,10 @@ const Footer = () => {
         </div>
 
         {/* Modal */}
-        {showModal && (
-          <div className="modal">
-            <div className="modal-content">
-              <span className="close" onClick={closeModal}>
-                &times;
-              </span>
-              {modalContent}
-            </div>
-          </div>
-        )}
-        
+      <Modal show={showModal} onClose={closeModal}>
+        {modalContent}
+      </Modal>
+
       </div>
     </footer>
   );

@@ -30,15 +30,18 @@ const Dashboard = () => {
 
         <div className="card mb-4">
           <div className="card-header text-start">Profile</div>
-          <div className="card-body">
+          <div className="text-center m-1">
             <img
-              src={userProfile.profilePicture}
+              // src={userProfile.profilePicture}
+              src="./img/illus/avatar_female.svg"
               alt="Avatar"
               className="rounded-circle"
               id="profilePicture"
               width="100"
               height="100"
             />
+            </div>
+          <div className="card-body text-start">
             <p className="card-title text-center m-3" id="patientName">
               {userProfile.name}
             </p>

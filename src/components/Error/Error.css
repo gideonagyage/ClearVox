@@ -5,7 +5,6 @@
     top: 0;
     left: 0;
     width: 100%;
-    background: linear-gradient(270deg, #ffd698, #ffd4c0);
   }
   
   #notfound .notfound {
@@ -57,14 +56,18 @@
     margin-bottom: 25px;
     letter-spacing: 3px;
   }
-  
+
+  .notfound h2::after {
+    background: none;
+  }
   
   .notfound p {
     font-family: 'Kanit', sans-serif;
     font-size: 16px;
     font-weight: 300;
-    margin-top: 0px;
+    margin: 8px;
     margin-bottom: 25px;
+    color: #FF9900;
   }
 
   .btn-home {

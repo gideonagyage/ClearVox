@@ -77,7 +77,7 @@ footer {
     padding: 0px 35px 30px;
     border: 2px solid #ff9900;
     border-radius: 20px;
-    width: 70%;
+    max-width: 70%;
     margin: 40px auto;
   }
   

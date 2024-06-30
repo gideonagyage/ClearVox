@@ -1,11 +1,21 @@
 import React, { useState, useRef } from "react";
-import "./Home.css";
 import { Link } from "react-router-dom";
-
+import { useNavigate } from 'react-router-dom';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
+import Modal from "../Modal/Modal";
+
+import "./Home.css";
 
 const Home = () => {
+
+  const navigate = useNavigate();
+  const scrollToTop = () => {
+    navigate('/signing');
+    window.scrollTo(0, 0); // Scroll to the top
+    console.log("Scrolled to the Top View");
+  };
+
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState("");
 
@@ -22,23 +32,26 @@ const Home = () => {
   // Scroll to the Features
   const scrollToFeatures = () => {
     featuresRef.current.scrollIntoView({ behavior: "smooth" });
+    console.log("Scrolled to the Features")
   };
 
   // Scroll to the Testimonials
   const scrollToTestimonials = () => {
     testimonialsRef.current.scrollIntoView({ behavior: "smooth" });
+    console.log("Scrolled to the Testimonials")
   };
 
   // Scroll to the Contact Us
-  const scrollToContactUs = () => {
+  const scrollToContactMe = () => {
     const contactUsSection = document.querySelector(".contact-us");
     contactUsSection.scrollIntoView({ behavior: "smooth" });
+    console.log("Scrolled to Contact Me");
   };
 
   // Click listener for the Pricing
   const handlePricingClick = (event) => {
     event.preventDefault();
-    console.log("Meet the Developer is clicked");
+    console.log("Categories for pricing is clicked");
     setModalContent(
       <div className="text-center m-2">
         <h2>Pricing</h2>
@@ -47,9 +60,9 @@ const Home = () => {
           <table>
             <thead>
               <tr>
-                <th>Basic</th>
-                <th>Standard</th>
-                <th>Premium</th>
+                <th>Basic<br/>$29</th>
+                <th>Standard<br/>$59</th>
+                <th>Premium<br/>$99</th>
                 <th>Features</th>
               </tr>
             </thead>
@@ -210,6 +223,7 @@ const Home = () => {
   // Close the modal
   const closeModal = () => {
     setShowModal(false);
+    console.log("Closed the Modal")
   };
 
   return (
@@ -267,7 +281,7 @@ const Home = () => {
                 </a>
               </li>
               <li className="nav-item">
-                <a onClick={scrollToContactUs} className="nav-link">
+                <a onClick={scrollToContactMe} className="nav-link">
                   Contact Us
                 </a>
               </li>
@@ -288,6 +302,7 @@ const Home = () => {
       <div>
         {/* Heading of the Home Page */}
         <div className="main-content">
+          <br/> <br/> <br/>
           <span>Streamline Your Complaint Management</span>
           <br />
           <p>
@@ -297,10 +312,12 @@ const Home = () => {
             Track, resolve, and analyze complaints with ease.
           </p>
 
-          {/* To the sign in page */}
+          {/* To the sign up and sign in page */}
           <p>
-            <Link to="/Signing">
-              <button type="button" className="btn-register text-capitalize">
+            <Link to="/signing">
+              <button type="button" 
+              className="btn-register text-capitalize" 
+              onClick={scrollToTop} >
                 Get Started
               </button>
             </Link>
@@ -316,7 +333,7 @@ const Home = () => {
                 FEATURES
               </h2>
               <div className="row text-center">
-                <div className="col-md-5 col-12 text-center boundary">
+                <div className="col-md-5 col-12 text-center card">
                   <img
                     src="./img/illus/comp_submission.svg"
                     alt="Complaint Submission"
@@ -328,7 +345,7 @@ const Home = () => {
                     interface.
                   </p>
                 </div>
-                <div className="col-md-5 col-12 text-center boundary">
+                <div className="col-md-5 col-12 text-center card">
                   <img
                     src="./img/illus/comp_tracking.svg"
                     alt="Complaint Tracking"
@@ -342,7 +359,7 @@ const Home = () => {
                 </div>
               </div>
               <div className="row text-center">
-                <div className="col-md-5 col-12 text-center boundary">
+                <div className="col-md-5 col-12 text-center card">
                   <img
                     src="./img/illus/comp_categorization.svg"
                     alt="Complaint Categorization"
@@ -354,7 +371,7 @@ const Home = () => {
                     reporting.
                   </p>
                 </div>
-                <div className="col-md-5 col-12 text-center boundary">
+                <div className="col-md-5 col-12 text-center card">
                   <img
                     src="./img/illus/comp_assignment.svg"
                     alt="Complaint Assignment"
@@ -368,7 +385,7 @@ const Home = () => {
                 </div>
               </div>
               <div className="row text-center">
-                <div className="col-md-5 col-12 text-center boundary">
+                <div className="col-md-5 col-12 text-center card">
                   <img
                     src="./img/illus/comp_management.svg"
                     alt="Communication Management"
@@ -380,7 +397,7 @@ const Home = () => {
                     resolution process.
                   </p>
                 </div>
-                <div className="col-md-5 col-12 text-center boundary">
+                <div className="col-md-5 col-12 text-center card">
                   <img
                     src="./img/illus/comp_analytics.svg"
                     alt="Reporting and Analytics"
@@ -434,7 +451,7 @@ const Home = () => {
                       complaint management process."
                     </p>
                     <p className="overview">
-                      <b>Samuel Osei</b>, Operations Manager, Syrus Technologies
+                      <b>Emmanuel Osei</b>, Operations Manager, Syrus Technologies
                       Inc
                     </p>
                   </div>
@@ -473,12 +490,14 @@ const Home = () => {
                   </div>
                 </Carousel>
               </div>
-              {/* Register Today */}
+              
+          {/* To the sign up and sign in page */}
               <p className="text-center">
-                <Link to="/Signing">
+                <Link to="/signing">
                   <button
                     type="button"
                     className="btn-register text-capitalize"
+                    onClick={scrollToTop} 
                   >
                     Get Started
                   </button>
@@ -489,17 +508,10 @@ const Home = () => {
         </div>
 
         {/* Modal */}
-        {showModal && (
-          <div className="modal">
-            <div className="modal-content">
-              <span className="close" onClick={closeModal}>
-                &times;
-              </span>
-              {/* Modal Contents show here */}
-              {modalContent}
-            </div>
-          </div>
-        )}
+      <Modal show={showModal} onClose={closeModal}>
+        {modalContent}
+      </Modal>
+
       </div>
     </div>
   );

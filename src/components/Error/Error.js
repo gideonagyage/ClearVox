@@ -11,8 +11,7 @@ const Error = () => {
         </div>
         <h2>Oops! Page not found</h2>
         <p>
-          The page you are looking for might have been removed, had its name
-          changed or is temporarily unavailable.
+          The page you are looking is unavailable.
           <br />
           <Link to="/">
             <button type="button" className="btn-home">

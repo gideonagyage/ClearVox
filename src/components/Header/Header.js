@@ -1,6 +1,6 @@
 import React from "react";
 import "./Header.css";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
@@ -22,17 +22,21 @@ const Header = () => {
     },
   });
 
-  return (
-    <header className="header navbar navbar-expand-lg">
+  const location = useLocation();
+
+  // Check if the current route is '/signing'
+  if (location.pathname  !== "/") {
+    return (
+      <header className="header navbar navbar-expand-lg">
       <div className="container-fluid">
-        {/* ClearVox Logo */}
-        <div className="navbar-brand">
-          <img
-            src="./img/logo/clearvox_word.png"
-            alt="ClearVox Logo"
-            style={{ height: 40, width: "auto" }}
-          />
-        </div>
+          {/* ClearVox Logo */}
+          <Link to="/" className="navbar-brand">
+            <img
+              src="./img/logo/clearvox_word.png"
+              alt="ClearVox Logo"
+              style={{ height: 40, width: "auto" }}
+            />
+          </Link>
 
         {/* Navbar Toggler */}
         <button
@@ -49,24 +53,24 @@ const Header = () => {
 
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           {/* Navbar List */}
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0 nav-list">
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0 head-nav-list">
             <li className="nav-item">
-              <Link to="/Dashboard" className="nav-link" aria-current="page">
+              <Link to="/dashboard" className="nav-link" aria-current="page">
                 Dashboard
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/ComplaintForm" className="nav-link">
+              <Link to="/complaint-form" className="nav-link">
                 Form
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/Complaint" className="nav-link">
+              <Link to="/complaints" className="nav-link">
                 Complaints
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/Profile" className="nav-link">
+              <Link to="/profile" className="nav-link">
                 Profile
               </Link>
             </li>
@@ -99,13 +103,12 @@ const Header = () => {
           </form>
 
           {/* User Account */}
-          <div className="ms-3">
+          <div className="ms-3 text-center">
             {/* <span className="user-name">John Doe</span> */}
 
             <img
               src="./img/icons/account.svg"
-              alt="account" className="img-account"
-            />
+              alt="account" className="img-account" />
 
             {/* Link to Logout */}
             {/* Modal to Sign Out */}
@@ -116,7 +119,10 @@ const Header = () => {
         </div>
       </div>
     </header>
-  );
+    );
+  } else {
+    return null; // Don't render the header
+  }
 };
 
 export default Header;

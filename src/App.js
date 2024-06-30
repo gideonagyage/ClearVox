@@ -1,5 +1,9 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route
+} from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 
@@ -18,25 +22,40 @@ import Profile from "./components/Profile/Profile";
 import ContactMe from "./components/ContactMe/ContactMe";
 
 function App() {
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000); // Change and add logic to end loading after fetching API data
+
+    return () => clearTimeout(timeout);
+  }, []);
+
   return (
     <Router>
       <div className="app-container">
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Signing />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/contact" element={<ContactMe />} />
-        <Route path="/complaint" element={<ComplaintForm />} />
-        <Route path="/complaint/:id" element={<Complaint />} />
-        <Route path="/complaint-list" element={<ComplaintList />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="*" element={<Error />} />
-        <Route path="/loading" element={<Loading />} />
-        <Route path="/header" element={<Header />} />
-        <Route path="/complaint-form" element={<ComplaintForm />} />
-        <Route path="/contact-me" element={<ContactMe />} />
-      </Routes>
-      <Footer />
+        {/* Using useState and useEffect to determine when the Loading shows or disappears */}
+        {isLoading && <Loading />}
+
+        {/* Customed Header for other Components */}
+        <Header />
+
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/signing" element={<Signing />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/contact" element={<ContactMe />} />
+          <Route path="/complaint-form" element={<ComplaintForm />} />
+          <Route path="/complaints/:id" element={<Complaint />} />
+          <Route path="/complaint-list" element={<ComplaintList />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="*" element={<Error />} />
+          <Route path="/complaint-form" element={<ComplaintForm />} />
+          <Route path="/contact-me" element={<ContactMe />} />
+        </Routes>
+        <Footer />
       </div>
     </Router>
   );
