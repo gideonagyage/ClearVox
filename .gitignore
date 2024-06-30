@@ -9,7 +9,7 @@
 /coverage
 
 # workflows
-/.github/workflows
+/.github/workflows/
 .github/actions
 .github/schedule
 .github/metrics
