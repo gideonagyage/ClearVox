@@ -8,6 +8,12 @@ const AuthProvider = ({ children }) => {
   const { signOut, getCurrentUser } = useFirebase();
 
   useEffect(() => {
+    // Check if user data exists in localStorage
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+
     const unsubscribe = getCurrentUser((user) => {
       setUser(user);
     });
@@ -16,10 +22,10 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, signOut }}>
+    <AuthContext.Provider value={{ user, signOut, setUser }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export { AuthProvider, AuthContext };
+export { AuthProvider, AuthContext }; 

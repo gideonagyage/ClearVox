@@ -1,107 +1,18 @@
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /organizations/{organizationId} {
-      // Only organization administrators can access organization data
-      allow read, write: if request.auth.uid == resource.data.adminId;
-
-      // Only organization administrators can create new organizations
-      allow create: if request.auth.uid == resource.data.adminId;
-
-      // Only organization administrators can delete organizations
-      allow delete: if request.auth.uid == resource.data.adminId;
-
-      // Only organization administrators can create new administrators
-      match /administrators/{administratorId} {
-        allow create: if request.auth.uid == resource.data.adminId;
-
-        // Only organization administrators can edit administrator details
-        allow update: if request.auth.uid == resource.data.adminId;
-
-        // Only organization administrators can delete administrators
-        allow delete: if request.auth.uid == resource.data.adminId;
-      }
-
-      // Only organization administrators and users within the organization can access user data
-      match /users/{userId} {
-        allow read, write: if request.auth.uid == resource.data.adminId || request.auth.uid == resource.data.userId;
-
-        // Only organization administrators can create new users
-        allow create: if request.auth.uid == resource.data.adminId;
-
-        // Only organization administrators can edit user details
-        allow update: if request.auth.uid == resource.data.adminId;
-
-        // Only organization administrators can delete users
-        allow delete: if request.auth.uid == resource.data.adminId;
-      }
-
-      // Only organization administrators and staff within the organization can access staff data
-      match /staff/{staffId} {
-        allow read, write: if request.auth.uid == resource.data.adminId || request.auth.uid == resource.data.staffId;
-
-        // Only organization administrators can create new staff members
-        allow create: if request.auth.uid == resource.data.adminId;
-
-        // Only organization administrators can edit staff member details
-        allow update: if request.auth.uid == resource.data.adminId;
-
-        // Only organization administrators can delete staff members
-        allow delete: if request.auth.uid == resource.data.adminId;
-      }
-
-      // Only organization administrators and staff within the organization can access complaints
-      match /complaints/{complaintId} {
-        allow read, write: if request.auth.uid == resource.data.adminId || request.auth.uid == resource.data.userId;
-
-        // Only users and staff within the organization can create new complaints
-        allow create: if request.auth.uid == resource.data.userId || request.auth.uid == resource.data.staffId;
-
-        // Only users and staff within the organization can edit complaints
-        allow update: if request.auth.uid == resource.data.userId || request.auth.uid == resource.data.staffId;
-
-        // Only organization administrators can delete complaints
-        allow delete: if request.auth.uid == resource.data.adminId;
-      }
-    }
-
-    // Only ClearVox staff can access ClearVox staff data
-    match /clearVoxStaff/{clearVoxStaffId} {
-      allow read, write: if request.auth.uid == resource.data.clearVoxStaffId;
-
-      // Only ClearVox administrators can create new ClearVox staff members
-      allow create: if request.auth.uid == resource.data.clearVoxStaffId;
-
-      // Only ClearVox administrators can edit ClearVox staff member details
-      allow update: if request.auth.uid == resource.data.clearVoxStaffId;
-
-      // Only ClearVox administrators can delete ClearVox staff members
-      allow delete: if request.auth.uid == resource.data.clearVoxStaffId;
-    }
-
-    // Only ClearVox staff can access organization settings
-    match /organizationSettings/{organizationId} {
-      allow read, write: if request.auth.uid == resource.data.clearVoxStaffId;
-    }
-
-    // Only users can access their own user settings
-    match /userSettings/{userId} {
-      allow read, write: if request.auth.uid == resource.data.userId;
-    }
-
-    // Only staff members can access their own staff settings
-    match /staffSettings/{staffId} {
-      allow read, write: if request.auth.uid == resource.data.staffId;
-    }
-
-    // Only ClearVox staff members can access their own ClearVox staff settings
-    match /clearVoxStaffSettings/{clearVoxStaffId} {
-      allow read, write: if request.auth.uid == resource.data.clearVoxStaffId;
-    }
-
-    // For testing only
-    // Allow access from all users for 30 days
     match /{document=**} {
-      allow read, write: if request.time < timestamp.date(2024, 7, 8);
+      allow read, write: if true;
     }
+  }
+  match /users/{userId} {
+    allow write: if request.auth != null;
+  }
+
+  match /org/{orgId} {
+    allow write: if request.auth != null;
+  }
+
+  match /staff/{staffId} {
+    allow write: if request.auth != null;
   }
 }

@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./Header.css";
 import { Link, useLocation } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import Modal from "../Modal/ModalSignOut";
+import ModalSignOut from "../Modal/ModalSignOut";
 
 const Header = () => {
   const formik = useFormik({
@@ -22,103 +24,125 @@ const Header = () => {
     },
   });
 
+  const [showModal, setShowModal] = useState(false); // Showing the Modal
   const location = useLocation();
 
+  // Close the modal
+  const closeModal = () => {
+    setShowModal(false);
+    console.log("Closed the Modal");
+  };
+
+  // Click listener for the Pricing
+  const handleAccountSignOut = (event) => {
+    event.preventDefault();
+
+    setShowModal(true);
+    console.log("Account SignOut clicked");
+  };
+
   // Check if the current route is '/signing'
-  if (location.pathname  !== "/") {
+  if (location.pathname !== "/") {
     return (
-      <header className="header navbar navbar-expand-lg">
-      <div className="container-fluid">
-          {/* ClearVox Logo */}
-          <Link to="/" className="navbar-brand">
-            <img
-              src="./img/logo/clearvox_word.png"
-              alt="ClearVox Logo"
-              style={{ height: 40, width: "auto" }}
-            />
-          </Link>
-
-        {/* Navbar Toggler */}
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="toggle-navbar navbar-toggler-icon"></span>
-        </button>
-
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          {/* Navbar List */}
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0 head-nav-list">
-            <li className="nav-item">
-              <Link to="/dashboard" className="nav-link" aria-current="page">
-                Dashboard
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/complaint-form" className="nav-link">
-                Form
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/complaints" className="nav-link">
-                Complaints
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/profile" className="nav-link">
-                Profile
-              </Link>
-            </li>
-          </ul>
-
-          {/* Complaint Search Field */}
-          <form className="d-flex" onSubmit={formik.handleSubmit}>
-            <div className="input-group">
-              <input
-                className=" search-input form-control"
-                type="search"
-                placeholder="Search complaints..."
-                aria-label="Search"
-                name="search"
-                value={formik.values.search}
-                onChange={formik.handleChange}
+      <>
+        <header className="header navbar navbar-expand-lg">
+          <div className="container-fluid">
+            {/* ClearVox Logo */}
+            <Link to="/" className="navbar-brand">
+              <img
+                src="./img/logo/clearvox_word.png"
+                alt="ClearVox Logo"
+                style={{ height: 40, width: "auto" }}
               />
-              <button
-                className="search-btn"
-                type="submit"
-                disabled={!formik.isValid}
-              >
-                <img
-                  src="./img/icons/search.svg"
-                  alt="search"
-                  style={{ height: 28, width: "auto" }}
-                />
-              </button>
-            </div>
-          </form>
-
-          {/* User Account */}
-          <div className="ms-3 text-center">
-            {/* <span className="user-name">John Doe</span> */}
-
-            <img
-              src="./img/icons/account.svg"
-              alt="account" className="img-account" />
-
-            {/* Link to Logout */}
-            {/* Modal to Sign Out */}
-            <Link to="/SignOut" className="logout-link ms-2 visually-hidden">
-              Sign Out
             </Link>
+
+            {/* Navbar Toggler */}
+            <button
+              className="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span className="toggle-navbar navbar-toggler-icon"></span>
+            </button>
+
+            <div
+              className="collapse navbar-collapse"
+              id="navbarSupportedContent"
+            >
+              {/* Navbar List */}
+              <ul className="navbar-nav me-auto mb-2 mb-lg-0 head-nav-list">
+                <li className="nav-item">
+                  <Link
+                    to="/dashboard"
+                    className="nav-link"
+                    aria-current="page"
+                  >
+                    Dashboard
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/complaint-form" className="nav-link">
+                    Form
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/complaints" className="nav-link">
+                    Complaints
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/profile" className="nav-link">
+                    Profile
+                  </Link>
+                </li>
+              </ul>
+
+              {/* Complaint Search Field */}
+              <form className="d-flex" onSubmit={formik.handleSubmit}>
+                <div className="input-group">
+                  <input
+                    className=" search-input form-control"
+                    type="search"
+                    placeholder="Search complaints..."
+                    aria-label="Search"
+                    name="search"
+                    value={formik.values.search}
+                    onChange={formik.handleChange}
+                  />
+                  <button
+                    className="search-btn"
+                    type="submit"
+                    disabled={!formik.isValid}
+                  >
+                    <img
+                      src="./img/icons/search.svg"
+                      alt="search"
+                      style={{ height: 28, width: "auto" }}
+                    />
+                  </button>
+                </div>
+              </form>
+
+              {/* User Account to Sign out */}
+              <div className="ms-3 text-center">
+                <img
+                  onClick={handleAccountSignOut}
+                  src="./img/icons/account.svg"
+                  alt="account"
+                  className="img-account"
+                />
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </header>
+        </header>
+
+        {/* Modal to Sign Out */}
+        <ModalSignOut show={showModal} onClose={closeModal}></ModalSignOut>
+      </>
     );
   } else {
     return null; // Don't render the header

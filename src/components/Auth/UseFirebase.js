@@ -20,9 +20,8 @@ import {
 } from "firebase/firestore";
 import { useState } from "react";
 import { config } from "dotenv";
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/firestore';
-
+import "firebase/compat/firestore";
+import firebase from "firebase/compat/app";
 
 // Load environment variables from .env
 config();
@@ -70,165 +69,195 @@ const useFirebase = () => {
       setIsLoading(false);
     });
   };
-  
-//
-// AUTHENTICATION
-//
-//
-// Sign up a new user
-const signUpUser = async (email, password) => {
-  try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    // handle successful sign-up
-    console.log("Account created successfully");
-  } catch (error) {
-    // handle errors
-    console.error("Error signing up:", error);
-  }
-};
 
-// Sign in an existing user
-const signInUser = async (email, password) => {
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    // handle successful sign-in
-    console.log("Logged in successfully");
-  } catch (error) {
-    // handle errors
-    console.error("Error signing in:", error);
-  }
-};
-
-// Send a password reset email
-const resetPassword = async (email) => {
-  try {
-    await sendPasswordResetEmail(auth, email);
-    // handle successful password reset email sent
-    console.log("Password reset email sent successfully");
-  } catch (error) {
-    // handle errors
-    console.error("Error sending password reset email:", error);
-  }
-};
-
-//
-// USERS
-//
-//
-// Get all users
-const getUsers = async () => {
-  try {
-    const usersRef = collection(db, "users");
-const usersSnapshot = await getDocs(usersRef);
-const usersList = usersSnapshot.docs.map((doc) => ({ 
-  id: doc.id, ...doc
-  .data() }));
-return usersList;
-  } catch (error) {
-    console.error("Error getting users:", error);
-    return [];
-  }
-};
-
-// Add a user
-const addUser = async (userId, userData) => {
-  try {
-    const usersRef = collection(db, "users");
-    const docRef = await addDoc(usersRef, userId, userData);
-    return docRef.id; // Return the ID of the newly added user
+  //
+  // AUTHENTICATION
+  //
+  //
+  // Sign up a new user
+  const signUpUser = async (email, password) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      // handle successful sign-up
+      console.log("Account created successfully");
+      return userCredential;
     } catch (error) {
-    console.error("Error adding user:", error);
-    return null;
-  }
-};
+      // handle errors
+      console.error("Error signing up:", error);
+      throw error;
+    }
+  };
 
-const getUserById = async (userId) => {
-  try {
-    const userIdRef = doc(db, "users", userId);
-    const docSnapshot = await getDoc(userIdRef);
-    if (docSnapshot.exists()) {
-      return {id: docSnapshot.id, ...docSnapshot.data()};
-    } else {
+  // Sign in an existing user
+  const signInUser = async (email, password) => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      // handle successful sign-in
+      console.log("Logged in successfully");
+      return userCredential;
+    } catch (error) {
+      // handle errors
+      console.error("Error signing in:", error);
+      throw error;
+    }
+  };
+
+  // Send a password reset email
+  const resetPassword = async (email) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      // handle successful password reset email sent
+      console.log("Password reset email sent successfully");
+    } catch (error) {
+      // handle errors
+      console.error("Error sending password reset email:", error);
+    }
+  };
+
+  //
+  // USERS
+  //
+  //
+  // Get all users
+  const getUsers = async () => {
+    try {
+      const usersRef = collection(db, "users");
+      const usersSnapshot = await getDocs(usersRef);
+      const usersList = usersSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      return usersList;
+    } catch (error) {
+      console.error("Error getting users:", error);
+      return [];
+    }
+  };
+
+  // Add a user
+  const addUser = async (userData) => {
+    try {
+      const usersRef = collection(db, "users");
+      const docRef = await addDoc(usersRef, userData);
+      return docRef.id; // Return the ID of the newly added user
+    } catch (error) {
+      console.error("Error adding user:", error);
       return null;
     }
-  } catch (error) {
-    console.error("Error getting user:", error);
-    return null;
-  }
-};
+  };
 
-//
-// ORGANIZATIONS
-//
-//
-// Get all organizations
-const getOrganizations = async () => {
-  try {
-    const organizationsRef = collection(db, "org");
+  // Get user info by ID
+  const getUserById = async (userId) => {
+    try {
+      const userIdRef = doc(db, "users", userId);
+      const docSnapshot = await getDoc(userIdRef);
+      if (docSnapshot.exists()) {
+        return { id: docSnapshot.id, ...docSnapshot.data() };
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error("Error getting user:", error);
+      return null;
+    }
+  };
+
+  // Get user role by ID
+  const getUserRoleById = async (userId) => {
+    try {
+      const userRef = doc(db, "users", userId);
+      const userDoc = await getDoc(userRef);
+
+      if (userDoc.exists()) {
+        return userDoc.data().role;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error("Error getting user role:", error);
+      return null;
+    }
+  };
+
+  //
+  // ORGANIZATIONS
+  //
+  //
+  // Get all organizations
+  const getOrganizations = async () => {
+    try {
+      const organizationsRef = collection(db, "org");
       const querySnapshot = await getDocs(organizationsRef);
       const organizationsList = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
       return organizationsList;
-  } catch (error) {
-    console.error("Error getting organizations:", error);
-    return [];
-  }
-};
-
-// Add an organization to the database
-const addOrganization = async (orgName, organizationData) => {
-  try {
-    const registrationTimestamp = firebase.firestore.Timestamp.now();
-    organizationData.orgDateJoined = registrationTimestamp; 
-
-    const organizationRef = collection(db, "org", orgName, "details");
-    const docRef = await addDoc(organizationRef, organizationData);
-
-    return docRef.id; // Return the ID of the newly added organization
-  } catch (error) {
-    console.error("Error adding organization:", error);
-    return null;
-  }
-};
-
-
-// Update the organization
-const updateOrganization = async (orgName, organizationData) => {
-  try {
-    const organizationRef = doc(db, "org", orgName, "details");
-    await updateDoc(organizationRef, organizationData);
-  } catch (error) {
-    console.error("Error updating organization:", error);
-  }
-};
-
-// Delete an organization
-const deleteOrganization = async (orgName) => {
-  try {
-    const organizationRef = doc(db, "org", orgName);
-    await deleteDoc(organizationRef);
-  } catch (error) {
-    console.error("Error deleting organization:", error);
+    } catch (error) {
+      console.error("Error getting organizations:", error);
+      return [];
     }
-};
+  };
 
-// Get organization name by id
-const getOrganizationNameById = async (user, orgName) => {
-  try {
-    const organizationRef = doc(db, "users", user, orgName);
-    const docSnapshot = await getDoc(organizationRef);
-    if (docSnapshot.exists()) {
-      return {id: docSnapshot.id, ...docSnapshot.data()};
-    } else {
+  // Add an organization to the database
+  const addOrganization = async (orgName, organizationData) => {
+    try {
+      const registrationTimestamp = firebase.firestore.Timestamp.now();
+      organizationData.orgDateJoined = registrationTimestamp;
+
+      const organizationRef = collection(db, "org", orgName, "details");
+      const docRef = await addDoc(organizationRef, organizationData);
+
+      return docRef.id;
+    } catch (error) {
+      console.error("Error adding organization:", error);
       return null;
     }
-  } catch (error) {
-    console.error("Error getting organization:", error);
-    return null;
-  }
-};
+  };
+
+  // Update the organization
+  const updateOrganization = async (orgName, organizationData) => {
+    try {
+      const organizationRef = doc(db, "org", orgName, "details");
+      await updateDoc(organizationRef, organizationData);
+    } catch (error) {
+      console.error("Error updating organization:", error);
+    }
+  };
+
+  // Delete an organization
+  const deleteOrganization = async (orgName) => {
+    try {
+      const organizationRef = doc(db, "org", orgName);
+      await deleteDoc(organizationRef);
+    } catch (error) {
+      console.error("Error deleting organization:", error);
+    }
+  };
+
+  // Get organization name by id
+  const getOrganizationNameById = async (user, orgName) => {
+    try {
+      const organizationRef = doc(db, "users", user, orgName);
+      const docSnapshot = await getDoc(organizationRef);
+      if (docSnapshot.exists()) {
+        return { id: docSnapshot.id, ...docSnapshot.data() };
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error("Error getting organization:", error);
+      return null;
+    }
+  };
 
   //
   // TICKETS
@@ -375,7 +404,7 @@ const getOrganizationNameById = async (user, orgName) => {
   // Get all staff members for clearvox
   const getClearvoxStaff = async () => {
     try {
-      const staffRef = collection(db, "clearvox-staff");
+      const staffRef = collection(db, "org", "clearvox", "staff");
       const querySnapshot = await getDocs(staffRef);
       const staff = querySnapshot.docs.map((doc) => ({
         id: doc.id,
@@ -391,7 +420,7 @@ const getOrganizationNameById = async (user, orgName) => {
   // Add a staff member to a specific organization
   const addClearvoxStaff = async (staffData) => {
     try {
-      const staffRef = collection(db, "clearvox-staff");
+      const staffRef = collection(db, "org", "clearvox", "staff");
       const docRef = await addDoc(staffRef, staffData);
       return docRef.id; // Return the ID of the newly added staff member
     } catch (error) {
@@ -403,7 +432,7 @@ const getOrganizationNameById = async (user, orgName) => {
   // Update a staff member for a specific organization
   const updateClearvoxStaff = async (staffId, updatedStaffData) => {
     try {
-      const staffRef = doc(db, "clearvox-staff", staffId);
+      const staffRef = doc(db, "org", "clearvox", "staff", staffId);
       await updateDoc(staffRef, updatedStaffData);
     } catch (error) {
       console.error("Error updating staff:", error);
@@ -413,7 +442,7 @@ const getOrganizationNameById = async (user, orgName) => {
   // Delete a staff member for a specific organization
   const deleteClearvoxStaff = async (staffId) => {
     try {
-      const staffRef = doc(db, "clearvox-staff", staffId);
+      const staffRef = doc(db, "org", "clearvox", "staff", staffId);
       await deleteDoc(staffRef); // remove from clearVox
       const userRef = doc(db, "users", staffId);
       await deleteDoc(userRef); // remove from users
@@ -425,7 +454,7 @@ const getOrganizationNameById = async (user, orgName) => {
   // Get a specific staff member for a specific organization
   const getClearvoxStaffById = async (staffId) => {
     try {
-      const staffRef = doc(db, "clearvox-staff", staffId);
+      const staffRef = doc(db, "org", "clearvox", "staff", staffId);
       const staffDoc = await getDoc(staffRef);
       if (staffDoc.exists()) {
         return { id: staffDoc.id, ...staffDoc.data() };
@@ -609,6 +638,7 @@ const getOrganizationNameById = async (user, orgName) => {
     getUsers,
     addUser,
     getUserById,
+    getUserRoleById,
     // Organizations
     getOrganizations,
     addOrganization,
@@ -628,7 +658,7 @@ const getOrganizationNameById = async (user, orgName) => {
     deleteStaffFromOrg,
     getStaffByIdAndOrg,
     // ClearVox Staff
-    getClearvoxStaffById,
+    getClearvoxStaff,
     addClearvoxStaff,
     updateClearvoxStaff,
     deleteClearvoxStaff,

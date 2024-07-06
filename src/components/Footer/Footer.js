@@ -72,9 +72,8 @@ const Footer = () => {
   // Close the modal
   const closeModal = () => {
     setShowModal(false);
-    console.log("Closed the Modal")
+    console.log("Closed the Modal");
   };
-
 
   return (
     <footer className="footer">
@@ -115,7 +114,7 @@ const Footer = () => {
                     className="media-icon"
                     alt="Mail Icon"
                   />{" "}
-                  gideonagyage@gmail.com
+                  Send an Email
                 </a>
               </li>
               <li>
@@ -129,7 +128,7 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <Link to="/ContactMe">
+                <Link to="/contact-me">
                   {" "}
                   <img
                     src="./img/icons/form.svg"
@@ -143,7 +142,7 @@ const Footer = () => {
           </div>
 
           {/* Social Media */}
-          <div className="col-md-4">
+          <div className="col-md-3">
             <h4 className="footer-title">Social Media</h4>
             <p className="footer-title-line" />
             <ul className="list-unstyled">
@@ -192,10 +191,9 @@ const Footer = () => {
         </div>
 
         {/* Modal */}
-      <Modal show={showModal} onClose={closeModal}>
-        {modalContent}
-      </Modal>
-
+        <Modal show={showModal} onClose={closeModal}>
+          {modalContent}
+        </Modal>
       </div>
     </footer>
   );

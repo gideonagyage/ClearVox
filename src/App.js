@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 
@@ -20,9 +16,9 @@ import Home from "./components/Home/Home";
 import Signing from "./components/Signing/Signing";
 import Profile from "./components/Profile/Profile";
 import ContactMe from "./components/ContactMe/ContactMe";
+import PrivateRoute from "./components/Auth/PrivateRoute";
 
 function App() {
-
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -45,15 +41,18 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/signing" element={<Signing />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/contact" element={<ContactMe />} />
-          <Route path="/complaint-form" element={<ComplaintForm />} />
-          <Route path="/complaints/:id" element={<Complaint />} />
-          <Route path="/complaint-list" element={<ComplaintList />} />
-          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="*" element={<Error />} />
-          <Route path="/complaint-form" element={<ComplaintForm />} />
           <Route path="/contact-me" element={<ContactMe />} />
+
+          <Route element={<PrivateRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/complaint-form" element={<ComplaintForm />} />
+            <Route path="/complaint-form" element={<ComplaintForm />} />
+            <Route path="/complaints/:id" element={<Complaint />} />
+            <Route path="/complaint-list" element={<ComplaintList />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
         </Routes>
         <Footer />
       </div>

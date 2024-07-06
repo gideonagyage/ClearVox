@@ -1,17 +1,19 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { Link } from "react-router-dom";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
 import Modal from "../Modal/Modal";
+import { AuthContext } from "../Auth/AuthProvider";
+import { useFirebase } from '../Auth/UseFirebase';
+
 
 import "./Home.css";
 
 const Home = () => {
-
   const navigate = useNavigate();
   const scrollToTop = () => {
-    navigate('/signing');
+    navigate("/signing");
     window.scrollTo(0, 0); // Scroll to the top
     console.log("Scrolled to the Top View");
   };
@@ -32,13 +34,13 @@ const Home = () => {
   // Scroll to the Features
   const scrollToFeatures = () => {
     featuresRef.current.scrollIntoView({ behavior: "smooth" });
-    console.log("Scrolled to the Features")
+    console.log("Scrolled to the Features");
   };
 
   // Scroll to the Testimonials
   const scrollToTestimonials = () => {
     testimonialsRef.current.scrollIntoView({ behavior: "smooth" });
-    console.log("Scrolled to the Testimonials")
+    console.log("Scrolled to the Testimonials");
   };
 
   // Scroll to the Contact Us
@@ -51,7 +53,9 @@ const Home = () => {
   // Click listener for the Pricing
   const handlePricingClick = (event) => {
     event.preventDefault();
+
     console.log("Categories for pricing is clicked");
+
     setModalContent(
       <div className="text-center m-2">
         <h2>Pricing</h2>
@@ -60,9 +64,21 @@ const Home = () => {
           <table>
             <thead>
               <tr>
-                <th>Basic<br/>$29</th>
-                <th>Standard<br/>$59</th>
-                <th>Premium<br/>$99</th>
+                <th>
+                  Basic
+                  <br />
+                  $29
+                </th>
+                <th>
+                  Standard
+                  <br />
+                  $59
+                </th>
+                <th>
+                  Premium
+                  <br />
+                  $99
+                </th>
                 <th>Features</th>
               </tr>
             </thead>
@@ -223,8 +239,31 @@ const Home = () => {
   // Close the modal
   const closeModal = () => {
     setShowModal(false);
-    console.log("Closed the Modal")
+    console.log("Closed the Modal");
   };
+
+
+  // Get the user from the context
+  const { user } = useContext(AuthContext);
+
+  // Call useFirebase outside the useEffect callback
+  const { getCurrentUser } = useFirebase();
+
+  useEffect(() => {
+    const unsubscribe = getCurrentUser(); // Call getCurrentUser
+
+    // Cleanup the listener when the component unmounts
+    return () => unsubscribe(); 
+  }, []);
+
+// Use the user object in your component's logic
+if (user) {
+  // User is logged in
+  console.log("User is logged in:", user.email);
+} else {
+  // User is not logged in
+  console.log("User is not logged in");
+}
 
   return (
     <div className="container">
@@ -302,7 +341,7 @@ const Home = () => {
       <div>
         {/* Heading of the Home Page */}
         <div className="main-content">
-          <br/> <br/> <br/>
+          <br /> <br /> <br />
           <span>Streamline Your Complaint Management</span>
           <br />
           <p>
@@ -311,18 +350,19 @@ const Home = () => {
             <br />
             Track, resolve, and analyze complaints with ease.
           </p>
-
-          {/* To the sign up and sign in page */}
+          {/* To Dashboard if user is signed in, else to the sign up and sign in page */}
           <p>
-            <Link to="/signing">
-              <button type="button" 
-              className="btn-register text-capitalize" 
-              onClick={scrollToTop} >
-                Get Started
+            <Link to="/dashboard">
+              <button
+                type="button"
+                className="btn-register text-capitalize"
+                onClick={scrollToTop}
+              >
+                {/* Conditional button text */}
+                {user ? "My Dashboard" : "Get Started"}
               </button>
             </Link>
           </p>
-
           {/* Home's main content */}
           <div className="misc">
             <br /> <br />
@@ -451,8 +491,8 @@ const Home = () => {
                       complaint management process."
                     </p>
                     <p className="overview">
-                      <b>Emmanuel Osei</b>, Operations Manager, Syrus Technologies
-                      Inc
+                      <b>Emmanuel Osei</b>, Operations Manager, Syrus
+                      Technologies Inc
                     </p>
                   </div>
                   {/* 3rd Carousel */}
@@ -490,16 +530,16 @@ const Home = () => {
                   </div>
                 </Carousel>
               </div>
-              
-          {/* To the sign up and sign in page */}
+              {/* To Dashboard if user is signed in, else to the sign up and sign in page */}
               <p className="text-center">
-                <Link to="/signing">
+                <Link to="/dashboard">
                   <button
                     type="button"
                     className="btn-register text-capitalize"
-                    onClick={scrollToTop} 
+                    onClick={scrollToTop}
                   >
-                    Get Started
+                    {/* Conditional button text */}
+                    {user ? "My Dashboard" : "Get Started"}
                   </button>
                 </Link>
               </p>
@@ -508,10 +548,9 @@ const Home = () => {
         </div>
 
         {/* Modal */}
-      <Modal show={showModal} onClose={closeModal}>
-        {modalContent}
-      </Modal>
-
+        <Modal show={showModal} onClose={closeModal}>
+          {modalContent}
+        </Modal>
       </div>
     </div>
   );

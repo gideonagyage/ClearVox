@@ -1,7 +1,14 @@
-import React from "react";
+import React, {useEffect} from "react";
 import "./ContactMe.css";
 
 const ContactMe = () => {
+
+   // Scroll to the top when the component mounts
+   useEffect(() => {
+    console.log("Component mounted, scrollling to top");
+    window.scrollTo(0, 0);
+  }, [5]);
+
   return (
     <div className="container">
       <br />

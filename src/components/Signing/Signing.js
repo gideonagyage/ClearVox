@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Modal from "../Modal/Modal";
 import { useFirebase } from "../Auth/UseFirebase";
+import { useNavigate, useLocation } from "react-router-dom";
+import { AuthContext } from "../Auth/AuthProvider";
 
 import "./Signing.css";
 
@@ -12,6 +14,19 @@ const Signing = () => {
 
   const [showModal, setShowModal] = useState(false); // Showing the Modal
   const [modalContent, setModalContent] = useState(""); // The contents of the Modal
+  
+  const navigate = useNavigate();
+  const { setUser } = useContext(AuthContext);
+  const location = useLocation(); // Get the current location
+  const { user } = useContext(AuthContext);
+  
+  useEffect(() => {
+    // Check if the user is logged in and the current path is "/signing"
+    if (user && location.pathname === "/signing") {
+      navigate("/dashboard"); // Redirect to the dashboard
+    }
+  }, [user, location.pathname]);
+
 
   const {
     signUpUser,
@@ -20,8 +35,8 @@ const Signing = () => {
     addStaffToOrg,
     addOrganization,
     addUser,
+    getUserRoleById,
   } = useFirebase(); // Get functions from useFirebase
-
 
   // Click listener for forgot password
   const handleForgotPasswordClick = (event) => {
@@ -32,10 +47,10 @@ const Signing = () => {
         <h3 className="text-capitalize m-4">Forgot Password?</h3>
         <Formik
           initialValues={initialValues}
-          validationSchema={validationSchema}
+          validationSchema={forgotPasswordValidationSchema}
           onSubmit={handleReset}
         >
-          {({ setResetting }) => (
+          {({ isResetting }) => (
             <div className="justify-content-center text-center signing-form">
               <div className="w-100">
                 <Form>
@@ -57,7 +72,7 @@ const Signing = () => {
                     <button
                       type="submit"
                       className="btn mt-2"
-                      disabled={setResetting || isLoading}
+                      disabled={isResetting || isLoading}
                     >
                       {isLoading ? "Sending Link..." : "Reset"}
                     </button>
@@ -89,11 +104,9 @@ const Signing = () => {
   };
 
   const initialValues = {
-    // For Personal
-    name: "",
     email: "",
+    name: "",
     password: "",
-    // For Organization
     confirmPassword: "",
     orgName: "",
     orgPhone: "",
@@ -101,33 +114,55 @@ const Signing = () => {
     subscriptionTier: "basic",
   };
 
-  const validationSchema = Yup.object().shape({
-    // For Personal
-    name: Yup.string().required("Your name is required"),
+  // Validating Sign In
+  const signInValidationSchema = Yup.object().shape({
     email: Yup.string()
-      .email("Invalid email format")
+      .email("Invalid email address")
       .required("Email is required"),
-    password: Yup.string().required("Password is required"),
-
-    // For Organization
-    confirmPassword: Yup.string().when("password", {
-      is: (val) => val !== undefined && val.length > 0, // Check if val is defined
-      then: Yup.string()
-        .oneOf([Yup.ref("password"), null], "Passwords must match")
-        .required("Confirm password is required"),
-    }),
-    orgName: Yup.string().required("Organization's name is required"),
-    orgPhone: Yup.string()
-      .required("Organization's phone number is required")
-      .matches(/^\+?[0-9\s-]+/, "Please enter a valid phone number")
-      .min(10, "Phone number must be at least 10 digits"),
-    orgEmail: Yup.string()
-      .email("Invalid email format")
-      .required("Organization's email is required"),
-    subscriptionTier: Yup.string().required(
-      "Please select a subscription tier"
-    ),
+    password: Yup.string()
+      .min(8, "Password must be at least 8 characters")
+      .required("Password is required"),
   });
+
+  // Validating Sign Up
+  const signUpValidationSchema = Yup.object().shape({
+    name: Yup.string().required("Name is required"),
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
+    password: Yup.string()
+      .min(8, "Password must be at least 8 characters")
+      .required("Password is required"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password"), null], "Passwords must match")
+      .required("Confirm password is required"),
+    orgName: Yup.string().required("Organization name is required"),
+    orgPhone: Yup.string()
+      .matches(/^\+?[0-9\s-]+/, "Please enter a valid phone number")
+      .min(10, "Phone number must be at least 10 digits")
+      .required("Organization phone number is required"),
+    orgEmail: Yup.string()
+      .email("Invalid organization email address")
+      .required("Organization email is required"),
+    subscriptionTier: Yup.string().required("Subscription tier is required"),
+  });
+
+  // Validating Email for Forgot Password
+  const forgotPasswordValidationSchema = Yup.object().shape({
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
+  });
+
+  // Call useFirebase outside the useEffect callback
+  const { getCurrentUser } = useFirebase();
+
+  useEffect(() => {
+    const unsubscribe = getCurrentUser(); // Call getCurrentUser
+
+    // Cleanup the listener when the component unmounts
+    return () => unsubscribe(); 
+  }, []);
 
   // Signing in or Signing Up
   const handleSubmit = async (values, { setSubmitting }) => {
@@ -135,70 +170,211 @@ const Signing = () => {
 
     try {
       if (showSignIn) {
-        try {
         // Sign In
-        await signInUser(values.email, values.password);
-        // ... (handle successful sign-in)
-        }catch (error) {
-          // Handle errors
-          console.error("Error during sign in:", error);
-          // Display error message to the user
-        }
+        const userCredential = await signInUser(values.email, values.password);
+        const user = userCredential.user;
+        
+        // Check user's role
+        const userRole = await getUserRoleById(user.uid);
+
+        // Update AuthContext with the signed-in user and role
+        setUser({ ...user, role: userRole }); // Set the user and role in the AuthContext
+
+        // Store user data in localStorage
+        localStorage.setItem("user", JSON.stringify({ ...user, role: userRole }));
+
+        // Redirect to the dashboard
+        navigate("/dashboard");
+
+        // handle successful sign-in
+        console.log("Sign in successful with:", values.email);
+
+        // Show the modal for 3 seconds
+        setModalContent(
+          <div className="text-center my-3">
+            <h1>Sign In successful.</h1>
+          </div>
+        );
+        setShowModal(true);
+        setTimeout(() => {
+          setShowModal(false);
+        }, 3000); // Close the modal after 3 seconds
       } else {
-        try{
         // Sign Up
-        const { user } = await signUpUser(values.email, values.password);
-        await addUser(user.uid, values.name, values.email, values.orgName);
-        await addOrganization(
-          values.orgName, {
-          orgName: values.orgName,
-          orgPhone: values.orgPhone,
-          orgEmail: values.orgEmail,
-          orgPlan: values.subscriptionTier,
-          orgStatus: "active"
-        }); // Create organization document
-        await addStaffToOrg(
-          values.orgName, {
-          id: user.uid,
-          name: values.name,
-          email: values.email,
-          role: "admin",
-          notifications: {},
-          todo_list: {},
-          }); // Add staff to document
-        setShowSignIn(true); // Switch to sign in after successful sign up
+
+        try {
+          const result = await signUpUser(values.email, values.password);
+
+          // Check if there's an error
+          if (result.error) {
+            console.error("Sign up error:", result.error);
+            setModalContent(
+              <div className="text-center text-capitalize my-3">
+                <p>{result.error.message}</p>
+              </div>
+            );
+            setShowModal(true);
+          } else {
+            // Sign up successful
+            const { user } = result;
+
+            console.log("User Data:", {
+              name: values.name,
+              email: values.email,
+              orgName: values.orgName,
+              role: "admin",
+            });
+  
+            console.log("Organization Data:", {
+              orgName: values.orgName,
+              orgPhone: values.orgPhone,
+              orgEmail: values.orgEmail,
+              orgPlan: values.subscriptionTier,
+              orgStatus: "active",
+            });
+  
+            console.log("Staff Data:", {
+              id: user.uid,
+              name: values.name,
+              email: values.email,
+              role: "admin",
+              notifications: {},
+              todo_list: {},
+            });  
+
+            await Promise.all([
+              addUser({
+                name: values.name,
+                email: values.email,
+                orgName: values.orgName,
+                role: "admin",
+              }),
+              addOrganization(values.orgName, {
+                orgName: values.orgName,
+                orgPhone: values.orgPhone,
+                orgEmail: values.orgEmail,
+                orgPlan: values.subscriptionTier,
+                orgStatus: "active",
+              }),
+              addStaffToOrg(values.orgName, {
+                id: user.uid,
+                name: values.name,
+                email: values.email,
+                role: "admin",
+                notifications: {},
+                todo_list: {},
+              }),
+            ]);
+
+            setShowSignIn(true); // Switch to sign in after successful sign up
+
+            console.log("Sign up successful with:", values.email);
+
+            // Show the modal for 3 seconds
+            setModalContent(
+              <div className="text-center my-3">
+                <h1>
+                  Sign up successful.
+                  <br />
+                  Please Sign in now
+                </h1>
+              </div>
+            );
+            setShowModal(true);
+            setTimeout(() => {
+              setShowModal(false);
+            }, 3000); // Close the modal after 3 seconds
+          }
+        } catch (error) {
+          // Handle errors during addUser, addOrganization, or addStaffToOrg
+          console.error("Error adding user, organization, or staff:", error);
+          
+          setModalContent(
+            <div className="text-center my-3">
+              <p>An error occurred during sign up, please try again later.</p>
+            </div>
+          );
+          setShowModal(true);
         }
-        catch (error) {
-          // Handle errors
-          console.error("Error during sign-in/sign-up:", error);
-          // Display error message to the user
-        }
-    }
+      }
     } catch (error) {
       // Handle errors
-      console.error("Error during sign-in/sign-up:", error);
-      // Display error message to the user
+      if (error.code === "auth/email-already-in-use") {
+        // Handle the specific error
+        console.error("Email already in use:", error);
+        setModalContent(
+          <div className="text-center my-3">
+            <p>
+              This email is already associated with an account. Please try a
+              different email or sign in.
+            </p>
+          </div>
+        );
+        setShowModal(true);
+      } else {
+        // Handle other errors
+        console.error("Error during sign-up/sign-in:", error);
+        setModalContent(
+          <div className="text-center my-3">
+            <p>
+              An error occurred during sign up/sign in, please try again later.
+            </p>
+          </div>
+        );
+        setShowModal(true);
+      }
     } finally {
       setIsLoading(false); // Reset loading state
       setSubmitting(false);
     }
   };
 
-    // Resetting Password
-    const handleReset = async (values, { setResetting }) => {
-      setIsLoading(true); // Set loading state
-  
-      try {
-        // Simulate API call (replace with your actual logic)
-        await resetPassword(values.email);
-      } catch (error) {
-        // Handle errors
+  // Resetting Password
+  const handleReset = async (values, { setResetting }) => {
+    setIsLoading(true); // Set loading state
+
+    try {
+      await resetPassword(values.email);
+
+      // Show the modal for 3 seconds
+      setModalContent(
+        <div className="text-center my-3">
+          <h1 className="text-capitalize">
+            Reset link sent to
+            <br />
+            <span className="text-lowercase">{values.email}</span>
+          </h1>
+        </div>
+      );
+      setShowModal(true);
+      setTimeout(() => {
+        setShowModal(false);
+      }, 3000); // Close the modal after 3 seconds
+
+      console.log("Password reset link sent to:", values.email);
+    } catch (error) {
+      // Handle errors
+      // Show the modal for 3 seconds
+      setModalContent(
+        <div className="text-center my-3">
+          <h1 className="text-capitalize">
+            Error sending link to
+            <br />
+            <span className="text-lowercase">{values.email}</span>
+          </h1>
+        </div>
+      );
+      setShowModal(true);
+      setTimeout(() => {
+        setShowModal(false);
+      }, 3000); // Close the modal after 3 seconds
+
       console.error("Error sending reset link to email:", error);
-      } finally {
-        setIsLoading(false); // Reset loading state
-        setResetting(false);
-      }
-    };
+    } finally {
+      setIsLoading(false); // Reset loading state
+      setResetting(false);
+    }
+  };
 
   // Scroll to the top when the component mounts
   useEffect(() => {
@@ -212,7 +388,9 @@ const Signing = () => {
       {showSignIn && (
         <Formik
           initialValues={initialValues}
-          validationSchema={validationSchema}
+          validationSchema={
+            showSignIn ? signInValidationSchema : signUpValidationSchema
+          }
           onSubmit={handleSubmit}
         >
           {({ isSubmitting }) => (
@@ -290,7 +468,9 @@ const Signing = () => {
       {!showSignIn && (
         <Formik
           initialValues={initialValues}
-          validationSchema={validationSchema}
+          validationSchema={
+            showSignIn ? signInValidationSchema : signUpValidationSchema
+          }
           onSubmit={handleSubmit}
         >
           {({ isSubmitting }) => (
