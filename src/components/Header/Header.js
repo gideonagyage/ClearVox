@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import "./Header.css";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import Modal from "../Modal/ModalSignOut";
 import ModalSignOut from "../Modal/ModalSignOut";
+import { AuthContext } from "../Auth/AuthProvider";
 
 const Header = () => {
   const formik = useFormik({
@@ -26,6 +26,8 @@ const Header = () => {
 
   const [showModal, setShowModal] = useState(false); // Showing the Modal
   const location = useLocation();
+  const navigate = useNavigate(); // Get the navigate function
+  const { user } = useContext(AuthContext); // Get the user from the context
 
   // Close the modal
   const closeModal = () => {
@@ -42,7 +44,7 @@ const Header = () => {
   };
 
   // Check if the current route is '/signing'
-  if (location.pathname !== "/") {
+  if (location.pathname !== "/" && user) {
     return (
       <>
         <header className="header navbar navbar-expand-lg">
@@ -69,6 +71,7 @@ const Header = () => {
               <span className="toggle-navbar navbar-toggler-icon"></span>
             </button>
 
+            {/* NavBar List, Search functionality and Account Sign out */}
             <div
               className="collapse navbar-collapse"
               id="navbarSupportedContent"
@@ -78,31 +81,78 @@ const Header = () => {
                 <li className="nav-item">
                   <Link
                     to="/dashboard"
-                    className="nav-link"
+                    className={`nav-link ${
+                      location.pathname === "/dashboard" ? "disabled" : ""
+                    }`}
                     aria-current="page"
+                    style={{
+                      color:
+                        location.pathname === "/dashboard"
+                          ? "#1E3C70"
+                          : "white",
+                    }}
                   >
                     Dashboard
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/complaint-form" className="nav-link">
+                  <Link
+                    to="/complaint-form"
+                    className={`nav-link ${
+                      location.pathname === "/complaint-form" ? "disabled" : ""
+                    }`}
+                    aria-current="page"
+                    style={{
+                      color:
+                        location.pathname === "/complaint-form"
+                          ? "#1E3C70"
+                          : "white",
+                    }}
+                  >
                     Form
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/complaints" className="nav-link">
+                  <Link
+                    to="/complaints"
+                    className={`nav-link ${
+                      location.pathname === "/complaints" ? "disabled" : ""
+                    }`}
+                    aria-current="page"
+                    style={{
+                      color:
+                        location.pathname === "/complaints"
+                          ? "#1E3C70"
+                          : "white",
+                    }}
+                  >
                     Complaints
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/profile" className="nav-link">
+                  <Link
+                    to="/profile"
+                    className={`nav-link ${
+                      location.pathname === "/profile" ? "disabled" : ""
+                    }`}
+                    aria-current="page"
+                    style={{
+                      color:
+                        location.pathname === "/profile" ? "#1E3C70" : "white",
+                    }}
+                  >
                     Profile
                   </Link>
                 </li>
               </ul>
 
               {/* Complaint Search Field */}
-              <form className="d-flex" onSubmit={formik.handleSubmit}>
+              <form
+                className={`d-flex ${
+                  location.pathname !== "/complaints" ? "d-none" : ""
+                }`}
+                onSubmit={formik.handleSubmit}
+              >
                 <div className="input-group">
                   <input
                     className=" search-input form-control"
@@ -145,7 +195,24 @@ const Header = () => {
       </>
     );
   } else {
-    return null; // Don't render the header
+    if (location.pathname !== "/") {
+      return (
+        <>
+          <header className="header navbar navbar-expand-lg">
+            <div className="container-fluid">
+              {/* ClearVox Logo */}
+              <Link to="/" className="navbar-brand">
+                <img
+                  src="./img/logo/clearvox_word.png"
+                  alt="ClearVox Logo"
+                  style={{ height: 40, width: "auto" }}
+                />
+              </Link>
+            </div>
+          </header>
+        </>
+      );
+    }
   }
 };
 

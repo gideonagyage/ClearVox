@@ -7,7 +7,6 @@ import Modal from "../Modal/Modal";
 import { AuthContext } from "../Auth/AuthProvider";
 import { useFirebase } from '../Auth/UseFirebase';
 
-
 import "./Home.css";
 
 const Home = () => {
@@ -242,7 +241,6 @@ const Home = () => {
     console.log("Closed the Modal");
   };
 
-
   // Get the user from the context
   const { user } = useContext(AuthContext);
 
@@ -321,7 +319,7 @@ if (user) {
               </li>
               <li className="nav-item">
                 <a onClick={scrollToContactMe} className="nav-link">
-                  Contact Us
+                  Contact Me
                 </a>
               </li>
             </ul>
@@ -450,7 +448,9 @@ if (user) {
                   </p>
                 </div>
               </div>
+
               <br /> <br />
+
               {/* Testimonials */}
               <div>
                 <h2 ref={testimonialsRef} className="m-6 text-center">

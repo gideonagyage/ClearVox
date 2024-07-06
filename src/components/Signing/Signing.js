@@ -19,7 +19,7 @@ const Signing = () => {
   const { setUser } = useContext(AuthContext);
   const location = useLocation(); // Get the current location
   const { user } = useContext(AuthContext);
-  
+
   useEffect(() => {
     // Check if the user is logged in and the current path is "/signing"
     if (user && location.pathname === "/signing") {
@@ -180,9 +180,6 @@ const Signing = () => {
         // Update AuthContext with the signed-in user and role
         setUser({ ...user, role: userRole }); // Set the user and role in the AuthContext
 
-        // Store user data in localStorage
-        localStorage.setItem("user", JSON.stringify({ ...user, role: userRole }));
-
         // Redirect to the dashboard
         navigate("/dashboard");
 
@@ -201,7 +198,6 @@ const Signing = () => {
         }, 3000); // Close the modal after 3 seconds
       } else {
         // Sign Up
-
         try {
           const result = await signUpUser(values.email, values.password);
 

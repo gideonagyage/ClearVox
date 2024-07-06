@@ -11,7 +11,7 @@
     justify-content: center;
     align-items: center;
     overflow-y: auto;
-    z-index: 3;
+    z-index: 4;
   }
   
   .modal-content {
@@ -23,6 +23,7 @@
     max-width: 80%;
     overflow-y: auto;
     overflow-x: auto;
+    z-index: 5;
   }
   
   .close {

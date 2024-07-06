@@ -27,13 +27,13 @@ const ModalSignOut = ({ show, onClose }) => {
     } finally {
       setLoading(false); // Reset loading state to false
       onClose();
+      navigate("/signing"); // Redirect to the signing page
     }
   };
 
   const handleClose = () => {
     setLoading(false); // Reset loading state to false
     onClose(); // Close the modal after sign-out is complete
-    navigate("/signing"); // Redirect to the signing page
   };
 
   if (!show) {
@@ -42,7 +42,7 @@ const ModalSignOut = ({ show, onClose }) => {
 
   return (
     <div className="modal">
-      <div className="modal-content text-center">
+      <div className="modal-content-sign-out text-center">
         <span className="close" onClick={handleClose}>
           &times;
         </span>

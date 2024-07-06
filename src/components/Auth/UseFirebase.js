@@ -171,21 +171,26 @@ const useFirebase = () => {
   };
 
   // Get user role by ID
-  const getUserRoleById = async (userId) => {
-    try {
-      const userRef = doc(db, "users", userId);
-      const userDoc = await getDoc(userRef);
+const getUserRoleById = async (userId) => {
+  try {
+    console.log('Getting user id:', userId);
+    const userRef = doc(db, "users", userId);
+    const userDoc = await getDoc(userRef);
 
-      if (userDoc.exists()) {
-        return userDoc.data().role;
-      } else {
-        return null;
-      }
-    } catch (error) {
-      console.error("Error getting user role:", error);
+    if (userDoc.exists()) {
+      console.log('User document data:', userDoc.data());
+      const userRole = userDoc.data()
+      console.log('User role:', userRole.role);
+      return userRole.role;
+    } else {
+      console.log('User document not found:', userId);
       return null;
     }
-  };
+  } catch (error) {
+    console.error("Error getting user role:", error);
+    return null;
+  }
+};
 
   //
   // ORGANIZATIONS

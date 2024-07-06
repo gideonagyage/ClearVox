@@ -48,10 +48,8 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/complaint-form" element={<ComplaintForm />} />
-            <Route path="/complaint-form" element={<ComplaintForm />} />
-            <Route path="/complaints/:id" element={<Complaint />} />
+            <Route path="/complaints" element={<Complaint />} />
             <Route path="/complaint-list" element={<ComplaintList />} />
-            <Route path="/dashboard" element={<Dashboard />} />
           </Route>
         </Routes>
         <Footer />
