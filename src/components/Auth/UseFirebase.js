@@ -13,12 +13,13 @@ import {
   getDocs,
   addDoc,
   doc,
-  setDoc,
   getDoc,
   updateDoc,
   deleteDoc,
+  query,
+  where,
 } from "firebase/firestore";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { config } from "dotenv";
 import "firebase/compat/firestore";
 import firebase from "firebase/compat/app";
@@ -39,20 +40,31 @@ const firebaseConfig = {
 };
 
 //
-// Initialize Firebase
+// --- Initialize Firebase ---
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
 //
-// Custom Hook for Firebase Interactions
+// --- Custom Hook for Firebase Interactions ---
 const useFirebase = () => {
+
+  //
+  // --- State for storing data ---
   const [user, setUser] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [organizations, setOrganizations] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [tickets, setTickets] = useState([]);
+  const [reports, setReports] = useState([]);
+  const [enquiries, setEnquiries] = useState([]);
+  const [staff, setStaff] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   //
-  // Sign out
+  // --- Sign out ---
   const signOutUser = async () => {
+    localStorage.removeItem("user");
     try {
       await signOut(auth);
       setUser(null);
@@ -62,7 +74,7 @@ const useFirebase = () => {
   };
 
   //
-  // Get current user
+  // --- Get current user ---
   const getCurrentUser = () => {
     return onAuthStateChanged(auth, (user) => {
       setUser(user);
@@ -71,9 +83,9 @@ const useFirebase = () => {
   };
 
   //
-  // AUTHENTICATION
+  // --- AUTHENTICATION ---
   //
-  //
+
   // Sign up a new user
   const signUpUser = async (email, password) => {
     try {
@@ -123,39 +135,37 @@ const useFirebase = () => {
   };
 
   //
-  // USERS
+  // --- USERS ---
   //
-  //
+
   // Get all users
   const getUsers = async () => {
     try {
       const usersRef = collection(db, "users");
-      const usersSnapshot = await getDocs(usersRef);
-      const usersList = usersSnapshot.docs.map((doc) => ({
+      const querySnapshot = await getDocs(usersRef);
+      const usersData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      return usersList;
+      setUsers(usersData);
     } catch (error) {
       console.error("Error getting users:", error);
-      return [];
     }
   };
 
   // Add a user
-  const addUser = async (userData) => {
+  const addUser = async (newUser) => {
     try {
       const usersRef = collection(db, "users");
-      const docRef = await addDoc(usersRef, userData);
-      return docRef.id; // Return the ID of the newly added user
+      await addDoc(usersRef, newUser);
+      getUsers(); //refresh the user list
     } catch (error) {
       console.error("Error adding user:", error);
-      return null;
     }
   };
 
   // Get user info by ID
-  const getUserById = async (userId) => {
+  const getUserInfo = async (userId) => {
     try {
       const userIdRef = doc(db, "users", userId);
       const docSnapshot = await getDoc(userIdRef);
@@ -165,37 +175,53 @@ const useFirebase = () => {
         return null;
       }
     } catch (error) {
-      console.error("Error getting user:", error);
+      console.error("Error getting user info:", error);
       return null;
     }
   };
 
-  // Get user role by ID
-const getUserRoleById = async (userId) => {
-  try {
-    console.log('Getting user id:', userId);
-    const userRef = doc(db, "users", userId);
-    const userDoc = await getDoc(userRef);
+  // Update a user
+  const updateUser = async (userId, updatedUser) => {
+    try {
+      const userDocRef = doc(db, "users", userId);
+      await updateDoc(userDocRef, updatedUser);
+      getUsers(); // Refresh the user list after updating
+    } catch (error) {
+      console.error("Error updating user:", error);
+    }
+  };
 
-    if (userDoc.exists()) {
-      console.log('User document data:', userDoc.data());
-      const userRole = userDoc.data()
-      console.log('User role:', userRole.role);
-      return userRole.role;
-    } else {
-      console.log('User document not found:', userId);
+  // Delete a user
+  const deleteUser = async (userId) => {
+    try {
+      const userDocRef = doc(db, "users", userId);
+      await deleteDoc(userDocRef);
+      getUsers(); // Refresh the user list after deleting
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  };
+
+  // Get user role by ID
+  const getUserRole = async (userId) => {
+    try {
+      const userDocRef = doc(db, "users", userId);
+      const docSnap = await getDoc(userDocRef);
+      if (docSnap.exists()) {
+        return docSnap.data().role;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error("Error getting user role:", error);
       return null;
     }
-  } catch (error) {
-    console.error("Error getting user role:", error);
-    return null;
-  }
-};
+  };
 
   //
-  // ORGANIZATIONS
+  // --- ORGANIZATIONS ---
   //
-  //
+
   // Get all organizations
   const getOrganizations = async () => {
     try {
@@ -205,71 +231,105 @@ const getUserRoleById = async (userId) => {
         id: doc.id,
         ...doc.data(),
       }));
-      return organizationsList;
+      setOrganizations(organizationsList);
     } catch (error) {
       console.error("Error getting organizations:", error);
-      return [];
     }
   };
 
   // Add an organization to the database
-  const addOrganization = async (orgName, organizationData) => {
+  const addOrganization = async (organizationData) => {
     try {
       const registrationTimestamp = firebase.firestore.Timestamp.now();
       organizationData.orgDateJoined = registrationTimestamp;
 
-      const organizationRef = collection(db, "org", orgName, "details");
-      const docRef = await addDoc(organizationRef, organizationData);
+      const organizationRef = collection(db, "org");
+      await addDoc(organizationRef, organizationData);
 
-      return docRef.id;
+      getOrganizations(); // Refresh list of oirganizations
     } catch (error) {
       console.error("Error adding organization:", error);
+    }
+  };
+
+  // Get organization details by ID
+  const getOrganizationInfo = async (orgId) => {
+    try {
+      const orgDocRef = doc(db, "org", orgId);
+      const docSnap = await getDoc(orgDocRef);
+      if (docSnap.exists()) {
+        return { id: docSnap.id, ...docSnap.data() };
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error("Error getting organization details:", error);
       return null;
     }
   };
 
   // Update the organization
-  const updateOrganization = async (orgName, organizationData) => {
+  const updateOrganization = async (orgId, organizationData) => {
     try {
-      const organizationRef = doc(db, "org", orgName, "details");
+      const organizationRef = doc(db, "org", orgId);
       await updateDoc(organizationRef, organizationData);
+      getOrganizations(); // Refresh the organizations list
     } catch (error) {
       console.error("Error updating organization:", error);
     }
   };
 
   // Delete an organization
-  const deleteOrganization = async (orgName) => {
+  const deleteOrganization = async (orgId) => {
     try {
-      const organizationRef = doc(db, "org", orgName);
+      const organizationRef = doc(db, "org", orgId);
       await deleteDoc(organizationRef);
+      getOrganizations(); // Refresh the organization list
     } catch (error) {
       console.error("Error deleting organization:", error);
     }
   };
 
-  // Get organization name by id
-  const getOrganizationNameById = async (user, orgName) => {
+  // Get organization by name
+  const getOrganizationByName = async (orgName) => {
     try {
-      const organizationRef = doc(db, "users", user, orgName);
-      const docSnapshot = await getDoc(organizationRef);
-      if (docSnapshot.exists()) {
-        return { id: docSnapshot.id, ...docSnapshot.data() };
+      const organizationsCollection = collection(db, "org");
+      const q = query(organizationsCollection, where("name", "==", orgName));
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        return querySnapshot.docs[0].data();
       } else {
         return null;
       }
     } catch (error) {
-      console.error("Error getting organization:", error);
+      console.error("Error getting organization by name:", error);
+      return null;
+    }
+  };
+
+  // Get organization ID by name
+  const getOrganizationIdByName = async (orgName) => {
+    try {
+      const organizationsCollection = collection(db, "org");
+      const q = query(organizationsCollection, where("name", "==", orgName));
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        return querySnapshot.docs[0].id; // Return the ID
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error("Error getting organization ID by name:", error);
       return null;
     }
   };
 
   //
-  // TICKETS
+  // --- TICKETS ---
   //
-  //
+
   // Get all tickets for a specific organization
-  const getTicketsByOrg = async (orgName) => {
+  const getTickets = async (orgName) => {
     try {
       const ticketsRef = collection(db, "org", orgName, "tickets");
       const querySnapshot = await getDocs(ticketsRef);
@@ -277,19 +337,22 @@ const getUserRoleById = async (userId) => {
         id: doc.id,
         ...doc.data(),
       }));
-      return tickets;
+      setTickets(tickets);
     } catch (error) {
       console.error("Error getting tickets:", error);
-      return [];
     }
   };
 
   // Add a ticket to a specific organization
-  const addTicketToOrg = async (orgName, ticketData) => {
+  const addTicket = async (orgName, ticketData) => {
     try {
+      const ticketTimestamp = firebase.firestore.Timestamp.now();
+      ticketData.dateAdded = ticketTimestamp;
+
       const ticketsRef = collection(db, "org", orgName, "tickets");
-      const docRef = await addDoc(ticketsRef, ticketData);
-      return docRef.id; // Return the ID of the newly added ticket
+      await addDoc(ticketsRef, ticketData);
+
+      getTickets(); // Refresh list of tickets
     } catch (error) {
       console.error("Error adding ticket:", error);
       return null;
@@ -297,27 +360,29 @@ const getUserRoleById = async (userId) => {
   };
 
   // Update a ticket for a specific organization
-  const updateTicketInOrg = async (orgName, ticketId, updatedTicketData) => {
+  const updateTicket = async (orgName, ticketId, updatedTicketData) => {
     try {
       const ticketRef = doc(db, "org", orgName, "tickets", ticketId);
       await updateDoc(ticketRef, updatedTicketData);
+      getTickets(); // Refresh list of tickets
     } catch (error) {
       console.error("Error updating ticket:", error);
     }
   };
 
   // Delete a ticket for a specific organization
-  const deleteTicketFromOrg = async (orgName, ticketId) => {
+  const deleteTicket = async (orgName, ticketId) => {
     try {
       const ticketRef = doc(db, "org", orgName, "tickets", ticketId);
       await deleteDoc(ticketRef);
+      getTickets(); // Refresh list of tickets
     } catch (error) {
       console.error("Error deleting ticket:", error);
     }
   };
 
-  // Get a specific ticket for a specific organization
-  const getTicketByIdAndOrg = async (orgName, ticketId) => {
+  // Get details of a ticket
+  const getTicketInfo = async (orgName, ticketId) => {
     try {
       const ticketRef = doc(db, "org", orgName, "tickets", ticketId);
       const ticketDoc = await getDoc(ticketRef);
@@ -333,19 +398,19 @@ const getUserRoleById = async (userId) => {
   };
 
   //
-  // STAFF OF ORGANIZATIONS
+  // --- STAFF ---
   //
-  //
+
   // Get all staff for a specific organization
-  const getStaffByOrg = async (orgName) => {
+  const getStaff = async (orgName) => {
     try {
       const staffRef = collection(db, "org", orgName, "staff");
       const querySnapshot = await getDocs(staffRef);
-      const staff = querySnapshot.docs.map((doc) => ({
+      const staffList = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      return staff;
+      setStaff(staffList);
     } catch (error) {
       console.error("Error getting staff:", error);
       return [];
@@ -353,11 +418,15 @@ const getUserRoleById = async (userId) => {
   };
 
   // Add a staff member to a specific organization
-  const addStaffToOrg = async (orgName, staffData) => {
+  const addStaff = async (orgName, staffData) => {
     try {
+      const staffTimestamp = firebase.firestore.Timestamp.now();
+      staffData.dateAdded = staffTimestamp;
+
       const staffRef = collection(db, "org", orgName, "staff");
-      const docRef = await addDoc(staffRef, staffData);
-      return docRef.id; // Return the ID of the newly added staff member
+      await addDoc(staffRef, staffData);
+
+      getStaff(); // Refresh list of staff
     } catch (error) {
       console.error("Error adding staff:", error);
       return null;
@@ -365,29 +434,33 @@ const getUserRoleById = async (userId) => {
   };
 
   // Update a staff member for a specific organization
-  const updateStaffInOrg = async (orgName, staffId, updatedStaffData) => {
+  const updateStaff = async (orgName, staffId, updatedStaffData) => {
     try {
       const staffRef = doc(db, "org", orgName, "staff", staffId);
       await updateDoc(staffRef, updatedStaffData);
+      getStaff(); // Refresh the staff list
     } catch (error) {
       console.error("Error updating staff:", error);
     }
   };
 
   // Delete a staff member for a specific organization
-  const deleteStaffFromOrg = async (orgName, staffId) => {
+  const deleteStaff = async (orgName, staffId) => {
     try {
       const staffRef = doc(db, "org", orgName, "staff", staffId);
       await deleteDoc(staffRef); // remove from organization
       const userRef = doc(db, "users", staffId);
-      await deleteDoc(userRef); // remove users
+      await deleteDoc(userRef); // remove from users
+      // Refresh staff list and users list
+      getStaff();
+      getUsers();
     } catch (error) {
       console.error("Error deleting staff:", error);
     }
   };
 
   // Get a specific staff member for a specific organization
-  const getStaffByIdAndOrg = async (orgName, staffId) => {
+  const getStaffInfo = async (orgName, staffId) => {
     try {
       const staffRef = doc(db, "org", orgName, "staff", staffId);
       const staffDoc = await getDoc(staffRef);
@@ -403,81 +476,11 @@ const getUserRoleById = async (userId) => {
   };
 
   //
-  // STAFF OF CLEARVOX
+  // --- CUSTOMERS ---
   //
-  //
-  // Get all staff members for clearvox
-  const getClearvoxStaff = async () => {
-    try {
-      const staffRef = collection(db, "org", "clearvox", "staff");
-      const querySnapshot = await getDocs(staffRef);
-      const staff = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      return staff;
-    } catch (error) {
-      console.error("Error getting staff:", error);
-      return [];
-    }
-  };
 
-  // Add a staff member to a specific organization
-  const addClearvoxStaff = async (staffData) => {
-    try {
-      const staffRef = collection(db, "org", "clearvox", "staff");
-      const docRef = await addDoc(staffRef, staffData);
-      return docRef.id; // Return the ID of the newly added staff member
-    } catch (error) {
-      console.error("Error adding staff:", error);
-      return null;
-    }
-  };
-
-  // Update a staff member for a specific organization
-  const updateClearvoxStaff = async (staffId, updatedStaffData) => {
-    try {
-      const staffRef = doc(db, "org", "clearvox", "staff", staffId);
-      await updateDoc(staffRef, updatedStaffData);
-    } catch (error) {
-      console.error("Error updating staff:", error);
-    }
-  };
-
-  // Delete a staff member for a specific organization
-  const deleteClearvoxStaff = async (staffId) => {
-    try {
-      const staffRef = doc(db, "org", "clearvox", "staff", staffId);
-      await deleteDoc(staffRef); // remove from clearVox
-      const userRef = doc(db, "users", staffId);
-      await deleteDoc(userRef); // remove from users
-    } catch (error) {
-      console.error("Error deleting staff:", error);
-    }
-  };
-
-  // Get a specific staff member for a specific organization
-  const getClearvoxStaffById = async (staffId) => {
-    try {
-      const staffRef = doc(db, "org", "clearvox", "staff", staffId);
-      const staffDoc = await getDoc(staffRef);
-      if (staffDoc.exists()) {
-        return { id: staffDoc.id, ...staffDoc.data() };
-      } else {
-        return null;
-      }
-    } catch (error) {
-      console.error("Error getting staff:", error);
-      return null;
-    }
-  };
-
-  //
-  // CUSTOMERS
-  //
-  //
   // Get all customers for a specific organization
-  const getCustomersByOrg = async (orgName) => {
+  const getCustomers = async (orgName) => {
     try {
       const customersRef = collection(db, "org", orgName, "customers");
       const querySnapshot = await getDocs(customersRef);
@@ -485,19 +488,22 @@ const getUserRoleById = async (userId) => {
         id: doc.id,
         ...doc.data(),
       }));
-      return customers;
+      setCustomers(customers);
     } catch (error) {
       console.error("Error getting customers:", error);
-      return [];
     }
   };
 
   // Add a customer to a specific organization
-  const addCustomerToOrg = async (orgName, customerData) => {
+  const addCustomer = async (orgName, customerData) => {
     try {
+      const customerTimestamp = firebase.firestore.Timestamp.now();
+      customerData.dateAdded = customerTimestamp;
+
       const customersRef = collection(db, "org", orgName, "customers");
-      const docRef = await addDoc(customersRef, customerData);
-      return docRef.id; // Return the ID of the newly added customer
+      await addDoc(customersRef, customerData);
+
+      getCustomers(); // Refresh customers list
     } catch (error) {
       console.error("Error adding customer:", error);
       return null;
@@ -505,11 +511,7 @@ const getUserRoleById = async (userId) => {
   };
 
   // Update a customer for a specific organization
-  const updateCustomerInOrg = async (
-    orgName,
-    customerId,
-    updatedCustomerData
-  ) => {
+  const updateCustomer = async (orgName, customerId, updatedCustomerData) => {
     try {
       const customerRef = doc(db, "org", orgName, "customers", customerId);
       await updateDoc(customerRef, updatedCustomerData);
@@ -519,19 +521,22 @@ const getUserRoleById = async (userId) => {
   };
 
   // Delete a customer for a specific organization
-  const deleteCustomerFromOrg = async (orgName, customerId) => {
+  const deleteCustomer = async (orgName, customerId) => {
     try {
       const customerRef = doc(db, "org", orgName, "customers", customerId);
       await deleteDoc(customerRef); // remove from organization
       const userRef = doc(db, "users", customerId);
       await deleteDoc(userRef); // remove from users
+      // Refresh customers list and users list
+      getCustomers();
+      getUsers();
     } catch (error) {
       console.error("Error deleting customer:", error);
     }
   };
 
   // Get a specific customer for a specific organization
-  const getCustomerByIdAndOrg = async (orgName, customerId) => {
+  const getCustomerInfo = async (orgName, customerId) => {
     try {
       const customerRef = doc(db, "org", orgName, "customers", customerId);
       const customerDoc = await getDoc(customerRef);
@@ -547,11 +552,11 @@ const getUserRoleById = async (userId) => {
   };
 
   //
-  // REPORTS
+  // --- REPORTS ---
   //
-  //
-  // Get all messages for a specific organization
-  const getReport = async () => {
+
+  // Get all reports
+  const getReports = async () => {
     try {
       const reportRef = collection(db, "messages", "reports");
       const querySnapshot = await getDocs(reportRef);
@@ -559,41 +564,59 @@ const getUserRoleById = async (userId) => {
         id: doc.id,
         ...doc.data(),
       }));
-      return messages;
+      setReports(messages);
     } catch (error) {
       console.error("Error getting reports:", error);
-      return [];
     }
   };
 
-  // Add a message to a specific organization
+  // Add a report to the messages
   const addReport = async (reportData) => {
     try {
       const reportRef = collection(db, "messages", "reports");
-      const docRef = await addDoc(reportRef, reportData);
-      return docRef.id; // Return the ID of the newly added report
+      addDoc(reportRef, reportData);
+
+      getReports(); // Refresh list of reports
     } catch (error) {
       console.error("Error adding report:", error);
       return null;
     }
   };
 
-  // Delete a message for a specific organization
+  // Delete a report
   const deleteReport = async (reportId) => {
     try {
       const reportRef = doc(db, "messages", "reports", reportId);
       await deleteDoc(reportRef);
+
+      getReports(); // Refresh list of reports
     } catch (error) {
       console.error("Error deleting report:", error);
     }
   };
 
+  // Get report information
+  const getReportInfo = async (reportId) => {
+    try {
+      const reportRef = doc(db, "messages", "reports", reportId);
+      const docRef = await getDoc(reportRef);
+      if (docRef.exists()) {
+        return { id: docRef.id, ...docRef.data() };
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error("Error getting report information:", error);
+      return null;
+    }
+  };
+
   //
-  // ENQUIRIES
+  // --- ENQUIRIES ---
   //
-  //
+
   // Get all enquiries
-  const getEnquiry = async () => {
+  const getEnquiries = async () => {
     try {
       const enquiryRef = collection(db, "messages", "enquiries");
       const querySnapshot = await getDocs(enquiryRef);
@@ -601,10 +624,9 @@ const getUserRoleById = async (userId) => {
         id: doc.id,
         ...doc.data(),
       }));
-      return enquiries;
+      setEnquiries(enquiries);
     } catch (error) {
       console.error("Error getting enquiries:", error);
-      return [];
     }
   };
 
@@ -612,23 +634,56 @@ const getUserRoleById = async (userId) => {
   const addEnquiry = async (enquiryData) => {
     try {
       const enquiryRef = collection(db, "messages", "enquiries");
-      const docRef = await addDoc(enquiryRef, enquiryData);
-      return docRef.id; // Return the ID of the newly added enquiry
+      await addDoc(enquiryRef, enquiryData);
+
+      getEnquiries(); // Refresh list of enquiries
     } catch (error) {
       console.error("Error adding an enquiry:", error);
       return null;
     }
   };
 
-  // Delete a message for a specific organization
+  // Delete a enquiry
   const deleteEnquiry = async (enquiryId) => {
     try {
-      const enquiryRef = doc(db, "org", "enquiries", enquiryId);
+      const enquiryRef = doc(db, "messages", "enquiries", enquiryId);
       await deleteDoc(enquiryRef);
+
+      getEnquiries(); // Refresh list of enquiries
     } catch (error) {
       console.error("Error deleting enquiry:", error);
     }
   };
+
+  
+  // Get enquiry information
+  const getEnquiryInfo = async (enquiryId) => {
+    try {
+      const enquiryRef = doc(db, "messages", "enquiries", enquiryId);
+      const docRef = await getDoc(enquiryRef);
+      if (docRef.exists()) {
+        return { id: docRef.id, ...docRef.data() };
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error("Error getting enquiry information:", error);
+      return null;
+    }
+  };
+
+  //
+  // Fetch initial data on component mount
+  //
+  useEffect(() => {
+    getUsers();
+    getOrganizations();
+    getTickets();
+    getStaff();
+    getCustomers();
+    getReports();
+    getEnquiries();
+  }, []);
 
   return {
     // Authenticating
@@ -640,46 +695,53 @@ const getUserRoleById = async (userId) => {
     signInUser,
     resetPassword,
     // Users
+    users,
     getUsers,
     addUser,
-    getUserById,
-    getUserRoleById,
+    getUserInfo,
+    updateUser,
+    deleteUser,
+    getUserRole,
     // Organizations
+    organizations,
     getOrganizations,
     addOrganization,
+    getOrganizationInfo,
     updateOrganization,
     deleteOrganization,
-    getOrganizationNameById,
+    getOrganizationByName,
+    getOrganizationIdByName,
     // Tickets
-    getTicketsByOrg,
-    addTicketToOrg,
-    updateTicketInOrg,
-    deleteTicketFromOrg,
-    getTicketByIdAndOrg,
-    // Organization's Staff
-    getStaffByOrg,
-    addStaffToOrg,
-    updateStaffInOrg,
-    deleteStaffFromOrg,
-    getStaffByIdAndOrg,
-    // ClearVox Staff
-    getClearvoxStaff,
-    addClearvoxStaff,
-    updateClearvoxStaff,
-    deleteClearvoxStaff,
-    getClearvoxStaffById,
-    // Organization's Customers
-    getCustomersByOrg,
-    addCustomerToOrg,
-    updateCustomerInOrg,
-    deleteCustomerFromOrg,
-    getCustomerByIdAndOrg,
+    tickets,
+    getTickets,
+    addTicket,
+    updateTicket,
+    deleteTicket,
+    getTicketInfo,
+    // Staff
+    staff,
+    getStaff,
+    addStaff,
+    updateStaff,
+    deleteStaff,
+    getStaffInfo,
+    // Customers
+    customers,
+    getCustomers,
+    addCustomer,
+    updateCustomer,
+    deleteCustomer,
+    getCustomerInfo,
     // Reports
-    getReport,
+    reports,
+    getReports,
+    getReportInfo,
     addReport,
     deleteReport,
     // Enquiries
-    getEnquiry,
+    enquiries,
+    getEnquiries,
+    getEnquiryInfo,
     addEnquiry,
     deleteEnquiry,
   };

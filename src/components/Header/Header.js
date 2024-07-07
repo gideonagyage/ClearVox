@@ -148,7 +148,7 @@ const Header = () => {
 
               {/* Complaint Search Field */}
               <form
-                className={`d-flex ${
+                className={`d-flex d-none ${
                   location.pathname !== "/complaints" ? "d-none" : ""
                 }`}
                 onSubmit={formik.handleSubmit}
@@ -186,6 +186,7 @@ const Header = () => {
                   className="img-account"
                 />
               </div>
+
             </div>
           </div>
         </header>

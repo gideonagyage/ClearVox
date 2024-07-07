@@ -17,10 +17,11 @@ const ModalSignOut = ({ show, onClose }) => {
   // Sign out
   const handleSignOut = async () => {
     setLoading(true); // Set loading state to true
+    // Sign out the user
+    localStorage.removeItem("user"); // Remove user data from localStorage
+    setUser(null); // Update the user state
     try {
-      await signOutUser(); // Sign out the user
-      localStorage.removeItem("user"); // Remove user data from localStorage
-      setUser(null); // Update the user state
+      await signOutUser(); 
       console.log("User signed out successfully.");
     } catch (error) {
       console.error("Error signing out:", error);

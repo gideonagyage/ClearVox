@@ -14,11 +14,10 @@ const Signing = () => {
 
   const [showModal, setShowModal] = useState(false); // Showing the Modal
   const [modalContent, setModalContent] = useState(""); // The contents of the Modal
-  
+
   const navigate = useNavigate();
-  const { setUser } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
   const location = useLocation(); // Get the current location
-  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     // Check if the user is logged in and the current path is "/signing"
@@ -27,15 +26,14 @@ const Signing = () => {
     }
   }, [user, location.pathname]);
 
-
   const {
     signUpUser,
     signInUser,
     resetPassword,
-    addStaffToOrg,
+    addStaff,
     addOrganization,
     addUser,
-    getUserRoleById,
+    getUserRole,
   } = useFirebase(); // Get functions from useFirebase
 
   // Click listener for forgot password
@@ -161,7 +159,7 @@ const Signing = () => {
     const unsubscribe = getCurrentUser(); // Call getCurrentUser
 
     // Cleanup the listener when the component unmounts
-    return () => unsubscribe(); 
+    return () => unsubscribe();
   }, []);
 
   // Signing in or Signing Up
@@ -173,9 +171,20 @@ const Signing = () => {
         // Sign In
         const userCredential = await signInUser(values.email, values.password);
         const user = userCredential.user;
-        
+
         // Check user's role
-        const userRole = await getUserRoleById(user.uid);
+        const userRole = await getUserRole(user.uid);
+
+        // Create the user data object
+        const userData = {
+          uid: user.uid,
+          email: user.email,
+          name: user.name,
+          role: userRole,
+        };
+
+        // Store the user data in localStorage
+        localStorage.setItem("user", JSON.stringify(userData));
 
         // Update AuthContext with the signed-in user and role
         setUser({ ...user, role: userRole }); // Set the user and role in the AuthContext
@@ -214,32 +223,9 @@ const Signing = () => {
             // Sign up successful
             const { user } = result;
 
-            console.log("User Data:", {
-              name: values.name,
-              email: values.email,
-              orgName: values.orgName,
-              role: "admin",
-            });
-  
-            console.log("Organization Data:", {
-              orgName: values.orgName,
-              orgPhone: values.orgPhone,
-              orgEmail: values.orgEmail,
-              orgPlan: values.subscriptionTier,
-              orgStatus: "active",
-            });
-  
-            console.log("Staff Data:", {
-              id: user.uid,
-              name: values.name,
-              email: values.email,
-              role: "admin",
-              notifications: {},
-              todo_list: {},
-            });  
-
             await Promise.all([
               addUser({
+                uid: user.uid,
                 name: values.name,
                 email: values.email,
                 orgName: values.orgName,
@@ -252,8 +238,8 @@ const Signing = () => {
                 orgPlan: values.subscriptionTier,
                 orgStatus: "active",
               }),
-              addStaffToOrg(values.orgName, {
-                id: user.uid,
+              addStaff(values.orgName, {
+                uid: user.uid,
                 name: values.name,
                 email: values.email,
                 role: "admin",
@@ -284,7 +270,7 @@ const Signing = () => {
         } catch (error) {
           // Handle errors during addUser, addOrganization, or addStaffToOrg
           console.error("Error adding user, organization, or staff:", error);
-          
+
           setModalContent(
             <div className="text-center my-3">
               <p>An error occurred during sign up, please try again later.</p>
@@ -376,7 +362,7 @@ const Signing = () => {
   useEffect(() => {
     console.log("Component mounted, scrollling to top");
     window.scrollTo(0, 0);
-  }, [5]);
+  }, []);
 
   return (
     <div className="Signing">

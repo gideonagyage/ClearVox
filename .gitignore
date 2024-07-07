@@ -17,8 +17,8 @@
 .github/renovate
 
 # firebase
-/src/firebase.js
-/src/components/Auth
+# /src/firebase.js
+# /src/components/Auth
 /firebase.json
 /firebase-debug.log
 /firebase-debug.log.old
@@ -27,6 +27,7 @@
 /build
 
 # misc
+.env
 .DS_Store
 .env.local
 .env.development.local

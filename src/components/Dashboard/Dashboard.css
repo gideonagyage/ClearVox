@@ -5,6 +5,10 @@
   gap: 15px;
 }
 
+.full-height {
+  min-height: 100vh;
+}
+
 .card {
   border: transparent;
   align-items: start;
