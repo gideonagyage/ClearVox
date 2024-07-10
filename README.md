@@ -40,10 +40,11 @@ The name emphasizes giving customers a clear voice to express their concerns.
 
 <p align="right"><a href="#readme-top">🔝</a></p>
 
-## ⚛️🔥 Technology Stack
+## ⚛️ 🅱️ Technology Stack 🔥 🐈‍⬛
 
-* **Frontend:** ReactJS
+* **Frontend:** ReactJS and Bootstrap CSS
 * **Backend:** Firebase (Firestore, Authentication, Functions)
+* **Version Control:** GitHub
 
 <p align="right"><a href="#readme-top">🔝</a></p>
 
