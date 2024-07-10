@@ -19,6 +19,7 @@
 # firebase
 # /src/firebase.js
 # /src/components/Auth
+/.firebase
 /firebase.json
 /firebase-debug.log
 /firebase-debug.log.old
@@ -33,6 +34,8 @@
 .env.development.local
 .env.test.local
 .env.production.local
+.vscode
+.hintrc
 
 npm-debug.log*
 yarn-debug.log*
