@@ -24,7 +24,7 @@
 /firebase-debug.log.old
 
 # production
-/build
+# /build
 
 # misc
 .env

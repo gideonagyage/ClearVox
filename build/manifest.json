@@ -1,0 +1,25 @@
+{
+  "short_name": "ClearVox",
+  "name": "ClearVox",
+  "icons": [
+    {
+      "src": "./img/logo/clearvox_logo.png",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "./img/logo/clearvox_logo.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "./img/logo/clearvox_logo.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#FF9900",
+  "background_color": "#1E3C70"
+}
