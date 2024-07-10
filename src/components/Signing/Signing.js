@@ -9,6 +9,17 @@ import { AuthContext } from "../Auth/AuthProvider";
 import "./Signing.css";
 
 const Signing = () => {
+  const {
+    signUpUser,
+    signInUser,
+    resetPassword,
+    getCurrentUser,
+    addStaff,
+    addOrganization,
+    addUser,
+    getUserRole,
+  } = useFirebase(); // Get functions from useFirebase
+
   const [showSignIn, setShowSignIn] = useState(true); // Initially show sign in
   const [isLoading, setIsLoading] = useState(false); // Loading state
 
@@ -22,19 +33,21 @@ const Signing = () => {
   useEffect(() => {
     // Check if the user is logged in and the current path is "/signing"
     if (user && location.pathname === "/signing") {
-      navigate("/dashboard"); // Redirect to the dashboard
+
+      if (user.email === "gideonagyage@gmail.com"){
+        navigate("/db-super-admin")
+      }
+      else if (user.email === "gideon.agyage@genstudents.org"){
+        navigate("/db-admin")
+      }
+      else if (user.email === "Atok948@gmail.com"){
+        navigate("/db-staff")
+      }
+      else {
+        navigate("/db-customer")
+      }
     }
   }, [user, location.pathname]);
-
-  const {
-    signUpUser,
-    signInUser,
-    resetPassword,
-    addStaff,
-    addOrganization,
-    addUser,
-    getUserRole,
-  } = useFirebase(); // Get functions from useFirebase
 
   // Click listener for forgot password
   const handleForgotPasswordClick = (event) => {
@@ -152,9 +165,6 @@ const Signing = () => {
       .required("Email is required"),
   });
 
-  // Call useFirebase outside the useEffect callback
-  const { getCurrentUser } = useFirebase();
-
   useEffect(() => {
     const unsubscribe = getCurrentUser(); // Call getCurrentUser
 
@@ -169,42 +179,80 @@ const Signing = () => {
     try {
       if (showSignIn) {
         // Sign In
-        const userCredential = await signInUser(values.email, values.password);
-        const user = userCredential.user;
+        try {
+          // Sign In
+          const userCredential = await signInUser(
+            values.email,
+            values.password
+          );
+          const user = userCredential.user;
 
-        // Check user's role
-        const userRole = await getUserRole(user.uid);
+          // Wait for getUserRole to complete
+          const userRole = await getUserRole(user.uid);
 
-        // Create the user data object
-        const userData = {
-          uid: user.uid,
-          email: user.email,
-          name: user.name,
-          role: userRole,
-        };
+          console.log("User's Unique id: ", user.uid);
+          console.log("\nGetting a user's Role:\n", userRole);
 
-        // Store the user data in localStorage
-        localStorage.setItem("user", JSON.stringify(userData));
+          // Create the user data object
+          const userData = {
+            uid: user.uid,
+            email: user.email,
+            name: user.name,
+            role: userRole,
+          };
 
-        // Update AuthContext with the signed-in user and role
-        setUser({ ...user, role: userRole }); // Set the user and role in the AuthContext
+          // Store the user data in localStorage
+          localStorage.setItem("user", JSON.stringify(userData));
 
-        // Redirect to the dashboard
-        navigate("/dashboard");
+          // Update AuthContext with the signed-in user and role
+          setUser({ ...user, role: userRole }); // Set the user and role in the AuthContext
 
-        // handle successful sign-in
-        console.log("Sign in successful with:", values.email);
+          // Redirect to the dashboard
+          if (user.email === "gideonagyage@gmail.com"){
+            navigate("/db-super-admin")
+          }
+          else if (user.email === "gideon.agyage@genstudents.org"){
+            navigate("/db-admin")
+          }
+          else if (user.email === "Atok948@gmail.com"){
+            navigate("/db-staff")
+          }
+          else {
+            navigate("/db-customer")
+          }
 
-        // Show the modal for 3 seconds
-        setModalContent(
-          <div className="text-center my-3">
-            <h1>Sign In successful.</h1>
-          </div>
-        );
-        setShowModal(true);
-        setTimeout(() => {
-          setShowModal(false);
-        }, 3000); // Close the modal after 3 seconds
+          // handle successful sign-in
+          console.log("Sign in successful with:", values.email);
+
+          // Show the modal for 3 seconds
+          setModalContent(
+            <div className="text-center my-3">
+              <h1>Sign In successful.</h1>
+            </div>
+          );
+          setShowModal(true);
+          setTimeout(() => {
+            setShowModal(false);
+          }, 3000); // Close the modal after 3 seconds
+        } catch (error) {
+          // Handle errors
+          console.error("Error signing in:", error);
+
+          // Show the modal for 3 seconds
+          setModalContent(
+            <div className="text-center mt-3 gap-2">
+              <h1>
+                Sign In failed.
+                <br />
+                Please Sign Up if you're new.
+              </h1>
+            </div>
+          );
+          setShowModal(true);
+          setTimeout(() => {
+            setShowModal(false);
+          }, 3000); // Close the modal after 3 seconds
+        }
       } else {
         // Sign Up
         try {
@@ -221,25 +269,21 @@ const Signing = () => {
             setShowModal(true);
           } else {
             // Sign up successful
-            const { user } = result;
-
             await Promise.all([
               addUser({
-                uid: user.uid,
                 name: values.name,
                 email: values.email,
                 orgName: values.orgName,
                 role: "admin",
               }),
-              addOrganization(values.orgName, {
+              addOrganization({
                 orgName: values.orgName,
                 orgPhone: values.orgPhone,
                 orgEmail: values.orgEmail,
                 orgPlan: values.subscriptionTier,
                 orgStatus: "active",
               }),
-              addStaff(values.orgName, {
-                uid: user.uid,
+              addStaff({
                 name: values.name,
                 email: values.email,
                 role: "admin",
@@ -248,17 +292,13 @@ const Signing = () => {
               }),
             ]);
 
-            setShowSignIn(true); // Switch to sign in after successful sign up
-
-            console.log("Sign up successful with:", values.email);
-
             // Show the modal for 3 seconds
             setModalContent(
               <div className="text-center my-3">
                 <h1>
                   Sign up successful.
                   <br />
-                  Please Sign in now
+                  Please sign in now.
                 </h1>
               </div>
             );
@@ -266,17 +306,37 @@ const Signing = () => {
             setTimeout(() => {
               setShowModal(false);
             }, 3000); // Close the modal after 3 seconds
+
+            setShowSignIn(true); // Switch to sign in after successful sign up
+
+            console.log("Sign up successful with:", values.email);
           }
         } catch (error) {
-          // Handle errors during addUser, addOrganization, or addStaffToOrg
-          console.error("Error adding user, organization, or staff:", error);
+          // Handle errors
+          if (error.code === "auth/email-already-in-use") {
+            // Handle the specific error
+            console.error("Email already in use:", error);
+            setModalContent(
+              <div className="text-center my-3">
+                <h1>
+                  This email is already associated with an account.
+                  <br />
+                  Please try a different email or sign in.
+                </h1>
+              </div>
+            );
+            setShowModal(true);
+          } else {
+            // Handle errors during addUser, addOrganization, or addStaffToOrg
+            console.error("Error adding user, organization, or staff:", error);
 
-          setModalContent(
-            <div className="text-center my-3">
-              <p>An error occurred during sign up, please try again later.</p>
-            </div>
-          );
-          setShowModal(true);
+            setModalContent(
+              <div className="text-center my-3">
+                <p>An error occurred during sign up, please try again later.</p>
+              </div>
+            );
+            setShowModal(true);
+          }
         }
       }
     } catch (error) {

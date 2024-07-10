@@ -9,14 +9,16 @@ import Footer from "./components/Footer/Footer";
 import ComplaintForm from "./components/ComplaintForm/ComplaintForm";
 import Complaint from "./components/Complaint/Complaint";
 import Loading from "./components/Loading/Loading";
-import ComplaintList from "./components/ComplaintList/ComplaintList";
 import Error from "./components/Error/Error";
-import Dashboard from "./components/Dashboard/Dashboard";
 import Home from "./components/Home/Home";
 import Signing from "./components/Signing/Signing";
 import Profile from "./components/Profile/Profile";
 import ContactMe from "./components/ContactMe/ContactMe";
 import PrivateRoute from "./components/Auth/PrivateRoute";
+import DashboardCustomer from "./components/Dashboard/DashboardCustomer";
+import DashboardStaff from "./components/Dashboard/DashboardStaff";
+import DashboardAdmin from "./components/Dashboard/DashBoardAdmin";
+import DashboardSuperAdmin from "./components/Dashboard/DashboardSuperAdmin";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -45,11 +47,13 @@ function App() {
           <Route path="/contact-me" element={<ContactMe />} />
 
           <Route element={<PrivateRoute />}>
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/db-customer" element={<DashboardCustomer />} />
+            <Route path="/db-staff" element={<DashboardStaff />} />
+            <Route path="/db-admin" element={<DashboardAdmin />} />
+            <Route path="/db-super-admin" element={<DashboardSuperAdmin />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/complaint-form" element={<ComplaintForm />} />
             <Route path="/complaints" element={<Complaint />} />
-            <Route path="/complaint-list" element={<ComplaintList />} />
           </Route>
         </Routes>
         <Footer />

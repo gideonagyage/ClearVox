@@ -7,6 +7,7 @@ import ModalSignOut from "../Modal/ModalSignOut";
 import { AuthContext } from "../Auth/AuthProvider";
 
 const Header = () => {
+  
   const formik = useFormik({
     initialValues: {
       search: "",
@@ -28,6 +29,7 @@ const Header = () => {
   const location = useLocation();
   const navigate = useNavigate(); // Get the navigate function
   const { user } = useContext(AuthContext); // Get the user from the context
+  const [getLocation, setLocation] = useState(null); // Get the location
 
   // Close the modal
   const closeModal = () => {
@@ -80,14 +82,14 @@ const Header = () => {
               <ul className="navbar-nav me-auto mb-2 mb-lg-0 head-nav-list">
                 <li className="nav-item">
                   <Link
-                    to="/dashboard"
+                    to="/signing"
                     className={`nav-link ${
-                      location.pathname === "/dashboard" ? "disabled" : ""
+                      location.pathname === getLocation ? "disabled" : ""
                     }`}
                     aria-current="page"
                     style={{
                       color:
-                        location.pathname === "/dashboard"
+                        location.pathname === getLocation
                           ? "#1E3C70"
                           : "white",
                     }}
@@ -129,6 +131,7 @@ const Header = () => {
                     Complaints
                   </Link>
                 </li>
+{/* 
                 <li className="nav-item">
                   <Link
                     to="/profile"
@@ -143,7 +146,8 @@ const Header = () => {
                   >
                     Profile
                   </Link>
-                </li>
+                </li> */}
+
               </ul>
 
               {/* Complaint Search Field */}
@@ -197,6 +201,24 @@ const Header = () => {
     );
   } else {
     if (location.pathname !== "/") {
+      return (
+        <>
+          <header className="header navbar navbar-expand-lg">
+            <div className="container-fluid">
+              {/* ClearVox Logo */}
+              <Link to="/" className="navbar-brand">
+                <img
+                  src="./img/logo/clearvox_word.png"
+                  alt="ClearVox Logo"
+                  style={{ height: 40, width: "auto" }}
+                />
+              </Link>
+            </div>
+          </header>
+        </>
+      );
+    }
+    else if (location.pathname !== "*")  {
       return (
         <>
           <header className="header navbar navbar-expand-lg">

@@ -12,7 +12,7 @@
     "axios": "^1.7.2",
     "bootstrap": "^5.3.3",
     "dotenv": "^16.4.5",
-    "firebase": "^10.12.2",
+    "firebase": "^10.12.3",
     "formik": "^2.4.6",
     "jquery": "^3.7.1",
     "popper.js": "^1.16.1",

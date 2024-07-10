@@ -68,7 +68,7 @@ const Complaint = () => {
   };
 
   return (
-    <div className="container mt-2">
+    <div className="container mt-2 full-height">
       <div className="form-title">
         <h2 className="text-center form-title-text">Complaints</h2>
       </div>

@@ -1,0 +1,8 @@
+.card-big {
+    min-width: 100%;
+    max-width: 100%;
+    background-color: rgb(201, 201, 201);
+    border-radius: 20px;
+    border: 1px solid #ffb341;
+    box-shadow: black;
+}

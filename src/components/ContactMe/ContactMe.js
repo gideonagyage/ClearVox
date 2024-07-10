@@ -7,10 +7,10 @@ const ContactMe = () => {
    useEffect(() => {
     console.log("Component mounted, scrollling to top");
     window.scrollTo(0, 0);
-  }, [5]);
+  }, []);
 
   return (
-    <div className="container">
+    <div className="container full-height">
       <br />
       <h1 className="text-center">Get In Touch</h1>
       <div className="row justify-content-center">

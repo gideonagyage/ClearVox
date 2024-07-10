@@ -350,7 +350,7 @@ if (user) {
           </p>
           {/* To Dashboard if user is signed in, else to the sign up and sign in page */}
           <p>
-            <Link to="/dashboard">
+            <Link to="/signing">
               <button
                 type="button"
                 className="btn-register text-capitalize"
@@ -456,7 +456,7 @@ if (user) {
                 <h2 ref={testimonialsRef} className="m-6 text-center">
                   Testimonials
                 </h2>
-                <Carousel autoPlay infiniteLoop>
+                <Carousel autoPlay infiniteLoop showThumbs={false}>
                   {/* 1st Carousel */}
                   <div className="myCarousel">
                     <div className="img-box">
@@ -532,7 +532,7 @@ if (user) {
               </div>
               {/* To Dashboard if user is signed in, else to the sign up and sign in page */}
               <p className="text-center">
-                <Link to="/dashboard">
+                <Link to="/signing">
                   <button
                     type="button"
                     className="btn-register text-capitalize"

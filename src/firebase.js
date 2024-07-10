@@ -1,9 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import firebase from "firebase/app";
-import "firebase/firestore";
-import "firebase/auth";
+import { getDatabase } from "firebase/database";
+import { getAuth } from "firebase/auth";
 
 import { config } from "dotenv";
 config(); // Load environment variables from .env
@@ -37,10 +36,13 @@ try {
 // Get Analytics instance
 const analytics = getAnalytics(app);
 
-// Initialize Firebase for Firestore and Auth
-firebase.initializeApp(firebaseConfig);
+// Initialize Realtime Database
+const database = getDatabase(app);
+
+// Initialize Firebase for Auth
+const authen = getAuth(app);
 
 // Export Firestore, Auth, and Firebase
-export const db = firebase.firestore();
-export const auth = firebase.auth();
+export const db = database;
+export const auth = authen;
 export default firebase;

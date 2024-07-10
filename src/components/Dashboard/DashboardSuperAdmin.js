@@ -1,121 +1,85 @@
+// DashboardSuperAdmin.js
 import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../Auth/AuthProvider";
-import { useFirebase } from '../Auth/UseFirebase';
+import ComplaintCard from "../ComplaintCard/ComplaintCard";
+import "./Dashboard.css";
 
 const DashboardSuperAdmin = () => {
+  console.log("Component: SuperAdminDashboard");
+
   const [userComplaints, setUserComplaints] = useState([]);
-  const [userProfile, setUserProfile] = useState({});
 
   // Get the user from the context
   const { user } = useContext(AuthContext);
-  const { db } = useFirebase(); // Get the Firestore database instance
 
-  useEffect(() => {
-    // Fetch user complaints from Firestore
-    const fetchUserComplaints = async () => {
-      try {
-        const userRef = db.collection("users").doc(user.uid);
-        const userDoc = await userRef.get();
-        if (userDoc.exists()) {
-          const complaints = userDoc.data().complaints || [];
-          setUserComplaints(complaints);
-        } else {
-          console.error("User document not found.");
-        }
-      } catch (error) {
-        console.error("Error fetching user complaints:", error);
-      }
-    };
-
-    if (user) {
-      fetchUserComplaints();
+  // Function to fetch complaints from localStorage
+  const fetchComplaints = () => {
+    const storedComplaints = localStorage.getItem("complaints");
+    if (storedComplaints) {
+      setUserComplaints(JSON.parse(storedComplaints));
     }
-  }, [user, db]);
+  };
 
+  // Function to save complaints to localStorage
+  const saveComplaints = (complaints) => {
+    localStorage.setItem("complaints", JSON.stringify(complaints));
+  };
+
+  // Load complaints on component mount
   useEffect(() => {
-    // Fetch user profile from Firestore
-    const fetchUserProfile = async () => {
-      try {
-        const userRef = db.collection("users").doc(user.uid);
-        const userDoc = await userRef.get();
-        if (userDoc.exists()) {
-          setUserProfile(userDoc.data());
-        } else {
-          console.error("User document not found.");
-        }
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-      }
-    };
+    fetchComplaints();
+  }, []);
 
-    if (user) {
-      fetchUserProfile();
-    }
-  }, [user, db]);
+  // Function to add a new complaint
+  const addComplaint = (newComplaint) => {
+    // Generate a unique ID for the new complaint
+    const newId = Date.now().toString();
+    const updatedComplaints = [...userComplaints, { ...newComplaint, id: newId }];
+    setUserComplaints(updatedComplaints);
+    saveComplaints(updatedComplaints);
+  };
+
+  // Function to update a complaint
+  const updateComplaint = (updatedComplaint) => {
+    const updatedComplaints = userComplaints.map((complaint) =>
+      complaint.id === updatedComplaint.id ? updatedComplaint : complaint
+    );
+    setUserComplaints(updatedComplaints);
+    saveComplaints(updatedComplaints);
+  };
+
+  // Function to delete a complaint
+  const deleteComplaint = (complaintId) => {
+    const updatedComplaints = userComplaints.filter(
+      (complaint) => complaint.id !== complaintId
+    );
+    setUserComplaints(updatedComplaints);
+    saveComplaints(updatedComplaints);
+  };
 
   return (
-    <div className="dashboard-container">
-      <br />
+    <div className="dashboard-container full-height">
+      <div className="card m-4 p-2">
+        <h1 className="m-5"> Welcome, Gideon Agyage </h1>
+      </div>
 
-      <div className="row text-center">
-        {/* Profile Section */}
-        <div className="col-md-4 col-12 profile-section">
-          <div className="card">
-            <div className="card-header text-start">Profile</div>
-            <div className="text-center m-1">
-              <img
-                // src={userProfile.profilePicture}
-                src="./img/illus/avatar_female.svg"
-                alt="Avatar"
-                className="rounded-circle"
-                id="profilePicture"
-                width="100"
-                height="100"
-              />
-            </div>
-            <div className="card-body text-start">
-              <p className="card-title text-center m-3" id="patientName">
-                {userProfile.name}
-              </p>
-              <p className="card-text mb-2">
-                Date of Birth: <br />
-                <span id="dateOfBirth">{userProfile.dateOfBirth}</span>
-              </p>
-              <p className="card-text mb-2">
-                Gender: <br />
-                <span id="gender">{userProfile.gender}</span>
-              </p>
-              <p className="card-text mb-2">
-                Phone Number: <br />
-                <span id="phoneNumber">{userProfile.phoneNumber}</span>
-              </p>
-              <p className="card-text mb-2">
-                Emergency Contact: <br />
-                <span id="emergencyContact">
-                  {userProfile.emergencyContact}
-                </span>
-              </p>
-              <p className="card-text mb-2">
-                Insurance Type: <br />
-                <span id="insuranceType">{userProfile.insuranceType}</span>
-              </p>
-            </div>
-          </div>
-        </div>
+      <div className="text-center m-4">
         {/* Complaints Section */}
-        <div className="col-md-8 col-12 complaints-section">
-          <div className="card">
+        <div className="complaints-section">
+          <div className="card p-3 bg-mid-gray">
             <h5 className="card-heading">Submitted Complaints</h5>
             {userComplaints.length > 0 ? (
-              <ul>
-                {userComplaints.map((complaint) => (
-                  <li key={complaint.id}>
-                    <h3>{complaint.title}</h3>
-                    <p>{complaint.description}</p>
-                    {/* Add other relevant complaint information */}
-                  </li>
-                ))}
-              </ul>
+              <div className="text-center">
+              {userComplaints.map((complaint) => (
+                <div key={complaint.id} className="text-center">
+                  <ComplaintCard
+                    complaint={complaint}
+                    onUpdate={updateComplaint}
+                    onDelete={deleteComplaint}
+                  />
+                </div>
+              ))}
+            </div>
             ) : (
               <p>No complaints submitted yet.</p>
             )}

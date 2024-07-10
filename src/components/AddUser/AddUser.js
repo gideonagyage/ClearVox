@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import "./Dashboard.css";
+import "./AddUser.css";
 import { AuthContext } from "../Auth/AuthProvider";
 import DashboardAdmin from "./DashBoardAdmin";
 import DashboardCustomer from "./DashboardCustomer";
@@ -9,10 +9,10 @@ import { useFirebase } from "../Auth/UseFirebase";
 import Loading from "../Loading/Loading";
 import { useNavigate, useLocation } from "react-router-dom";
 
-const Dashboard = () => {
+const AddUser = () => {
   const { user, setUser } = useContext(AuthContext);
   const { getUserRole } = useFirebase();
-  const [userRole, setUserRole] = useState("admin");
+  const [userRole, setUserRole] = useState(null);
   const [isLoading, setIsLoading] = useState(true); // Loading state
 
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ const Dashboard = () => {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-  }, []);
+  }, []); 
 
   // Get the user role by checking role
 
@@ -53,48 +53,25 @@ const Dashboard = () => {
   //
   //
   // --- Make user role by comparing email ---
-  // const fetchUserRole = async () => {
-  //   if (user) {
-  //     try {
-  //       const fetchedUserRole = user.email;
-  //       setUserRole(fetchedUserRole);
-  //     } catch (error) {
-  //       console.error("Error fetching user email:", error);
-  //     } finally {
-  //       setIsLoading(false); // Set loading to false after fetching role
-  //     }
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchUserRole(); // Call fetchUserRole when the component mounts
-  // }, [fetchUserRole]);
-
-
-  
-  useEffect(() => {
-
-
-    const fetchUserRole = async () => {
-
+  const fetchUserRole = async () => {
+    if (user) {
       try {
-        const currentRole = await getUserRole(user.uid);
-        console.log("User email", user.email)
-        setUserRole("admin");
+        const fetchedUserRole = user.email;
+        setUserRole(fetchedUserRole);
       } catch (error) {
         console.error("Error fetching user email:", error);
       } finally {
         setIsLoading(false); // Set loading to false after fetching role
       }
-    };
+    }
+  };
 
-    fetchUserRole();
-  }, []);
-
-
+  useEffect(() => {
+    fetchUserRole(); // Call fetchUserRole when the component mounts
+  }, [fetchUserRole]);
 
   return (
-    <div className="dashboard-container full-height">
+    <div className="dashboard-container">
       {isLoading ? (
         <div className="text-center full-height">
           <Loading />
@@ -107,9 +84,8 @@ const Dashboard = () => {
       ) : (
         <DashboardCustomer />
       )}
-
     </div>
   );
 };
 
-export default Dashboard;
+export default AddUser;
