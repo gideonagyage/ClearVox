@@ -1,24 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import "./ComplaintForm.css";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import Modal from "../Modal/Modal";
-
-const ComplaintFormSchema = Yup.object().shape({
-  fullName: Yup.string().required("Full name is required"),
-  email: Yup.string().email("Invalid email").required("Email is required"),
-  contactNumber: Yup.string().required("Contact number is required"),
-  category: Yup.string().required("Please select a category"),
-  description: Yup.string().required("Description is required"),
-  preferredContactMethod: Yup.string().required(
-    "Please select a preferred contact method"
-  ),
-});
+import { AuthContext } from "../Auth/AuthProvider";
 
 const ComplaintForm = () => {
+  const ComplaintFormSchema = Yup.object().shape({
+    fullName: Yup.string().required("Full name is required"),
+    email: Yup.string().email("Invalid email").required("Email is required"),
+    contactNumber: Yup.string().required("Contact number is required"),
+    category: Yup.string().required("Please select a category"),
+    description: Yup.string().required("Description is required"),
+    preferredContactMethod: Yup.string().required(
+      "Please select a preferred contact method"
+    ),
+  });
+
   const [showModal, setShowModal] = useState(false); // Showing the Modal
   const [modalContent, setModalContent] = useState(""); // The contents of the Modal
+
+  // Get the user from the context
+  const { user } = useContext(AuthContext);
+  const userEmail = user.email;
 
   const history = useNavigate();
 
@@ -38,6 +43,7 @@ const ComplaintForm = () => {
       ...values,
       status: "Pending", // Set initial status to "Pending"
       dateCreated: new Date().toISOString(), // Get current date and time
+      createdBy: userEmail,
     };
 
     // Store the complaint in localStorage
@@ -76,7 +82,6 @@ const ComplaintForm = () => {
       <Formik
         initialValues={{
           fullName: "",
-          email: "",
           contactNumber: "",
           category: "",
           description: "",
@@ -102,17 +107,6 @@ const ComplaintForm = () => {
                     />
                     <ErrorMessage
                       name="fullName"
-                      component="div"
-                      className="text-danger"
-                    />
-                  </div>
-
-                  {/* Email Address */}
-                  <div className="form-group">
-                    <label htmlFor="email">Email Address:</label>
-                    <Field name="email" type="email" className="form-control" />
-                    <ErrorMessage
-                      name="email"
                       component="div"
                       className="text-danger"
                     />
@@ -175,7 +169,6 @@ const ComplaintForm = () => {
                       className="form-control"
                     >
                       <option value="">Please select</option>
-                      <option value="Email">Email</option>
                       <option value="Phone">Phone</option>
                       <option value="WhatsApp">WhatsApp</option>
                     </Field>
@@ -210,7 +203,6 @@ const ComplaintForm = () => {
       <Modal show={showModal} onClose={closeModal}>
         {modalContent}
       </Modal>
-
     </div>
   );
 };

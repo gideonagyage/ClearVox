@@ -19,6 +19,7 @@ import DashboardCustomer from "./components/Dashboard/DashboardCustomer";
 import DashboardStaff from "./components/Dashboard/DashboardStaff";
 import DashboardAdmin from "./components/Dashboard/DashBoardAdmin";
 import DashboardSuperAdmin from "./components/Dashboard/DashboardSuperAdmin";
+import ComplaintFormUpdate from "./components/ComplaintForm/ComplaintFormUpdate";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -53,6 +54,7 @@ function App() {
             <Route path="/db-super-admin" element={<DashboardSuperAdmin />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/complaint-form" element={<ComplaintForm />} />
+            <Route path="/complaint-form-update/:complaintId?" element={<ComplaintFormUpdate />} />
             <Route path="/complaints" element={<Complaint />} />
           </Route>
         </Routes>

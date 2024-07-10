@@ -7,7 +7,6 @@ import ModalSignOut from "../Modal/ModalSignOut";
 import { AuthContext } from "../Auth/AuthProvider";
 
 const Header = () => {
-  
   const formik = useFormik({
     initialValues: {
       search: "",
@@ -89,9 +88,7 @@ const Header = () => {
                     aria-current="page"
                     style={{
                       color:
-                        location.pathname === getLocation
-                          ? "#1E3C70"
-                          : "white",
+                        location.pathname === getLocation ? "#1E3C70" : "white",
                     }}
                   >
                     Dashboard
@@ -114,7 +111,8 @@ const Header = () => {
                     Form
                   </Link>
                 </li>
-                <li className="nav-item">
+
+                {/* <li className="nav-item">
                   <Link
                     to="/complaints"
                     className={`nav-link ${
@@ -130,8 +128,9 @@ const Header = () => {
                   >
                     Complaints
                   </Link>
-                </li>
-{/* 
+                </li> */}
+
+                {/* 
                 <li className="nav-item">
                   <Link
                     to="/profile"
@@ -147,7 +146,6 @@ const Header = () => {
                     Profile
                   </Link>
                 </li> */}
-
               </ul>
 
               {/* Complaint Search Field */}
@@ -190,7 +188,6 @@ const Header = () => {
                   className="img-account"
                 />
               </div>
-
             </div>
           </div>
         </header>
@@ -199,6 +196,9 @@ const Header = () => {
         <ModalSignOut show={showModal} onClose={closeModal}></ModalSignOut>
       </>
     );
+  }
+  if (location.pathname === "/") {
+    return <></>;
   } else {
     if (location.pathname !== "/") {
       return (
@@ -217,8 +217,7 @@ const Header = () => {
           </header>
         </>
       );
-    }
-    else if (location.pathname !== "*")  {
+    } else if (location.pathname !== "*") {
       return (
         <>
           <header className="header navbar navbar-expand-lg">

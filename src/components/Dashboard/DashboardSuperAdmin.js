@@ -3,14 +3,17 @@ import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../Auth/AuthProvider";
 import ComplaintCard from "../ComplaintCard/ComplaintCard";
 import "./Dashboard.css";
+import { useNavigate } from "react-router-dom";
 
 const DashboardSuperAdmin = () => {
   console.log("Component: SuperAdminDashboard");
 
   const [userComplaints, setUserComplaints] = useState([]);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   // Get the user from the context
   const { user } = useContext(AuthContext);
+  const userEmail = user.email;
 
   // Function to fetch complaints from localStorage
   const fetchComplaints = () => {
@@ -41,11 +44,8 @@ const DashboardSuperAdmin = () => {
 
   // Function to update a complaint
   const updateComplaint = (updatedComplaint) => {
-    const updatedComplaints = userComplaints.map((complaint) =>
-      complaint.id === updatedComplaint.id ? updatedComplaint : complaint
-    );
-    setUserComplaints(updatedComplaints);
-    saveComplaints(updatedComplaints);
+    // Navigate to the ComplaintForm component with the complaint ID
+    navigate(`/complaint-form-update/${updatedComplaint.id}`); 
   };
 
   // Function to delete a complaint
@@ -60,14 +60,14 @@ const DashboardSuperAdmin = () => {
   return (
     <div className="dashboard-container full-height">
       <div className="card m-4 p-2">
-        <h1 className="m-5"> Welcome, Gideon Agyage </h1>
+        <h3 className="m-3 text-blue"> Welcome, Gideon Agyage | Super Admin </h3>
       </div>
 
       <div className="text-center m-4">
         {/* Complaints Section */}
         <div className="complaints-section">
           <div className="card p-3 bg-mid-gray">
-            <h5 className="card-heading">Submitted Complaints</h5>
+            <h5 className="card-heading text-center">Submitted Complaints</h5>
             {userComplaints.length > 0 ? (
               <div className="text-center">
               {userComplaints.map((complaint) => (

@@ -9,6 +9,7 @@ import { AuthContext } from "../Auth/AuthProvider";
 import "./Signing.css";
 
 const Signing = () => {
+  
   const {
     signUpUser,
     signInUser,
@@ -119,9 +120,6 @@ const Signing = () => {
     name: "",
     password: "",
     confirmPassword: "",
-    orgName: "",
-    orgPhone: "",
-    orgEmail: "",
     subscriptionTier: "basic",
   };
 
@@ -147,14 +145,6 @@ const Signing = () => {
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password"), null], "Passwords must match")
       .required("Confirm password is required"),
-    orgName: Yup.string().required("Organization name is required"),
-    orgPhone: Yup.string()
-      .matches(/^\+?[0-9\s-]+/, "Please enter a valid phone number")
-      .min(10, "Phone number must be at least 10 digits")
-      .required("Organization phone number is required"),
-    orgEmail: Yup.string()
-      .email("Invalid organization email address")
-      .required("Organization email is required"),
     subscriptionTier: Yup.string().required("Subscription tier is required"),
   });
 
@@ -273,13 +263,9 @@ const Signing = () => {
               addUser({
                 name: values.name,
                 email: values.email,
-                orgName: values.orgName,
                 role: "admin",
               }),
               addOrganization({
-                orgName: values.orgName,
-                orgPhone: values.orgPhone,
-                orgEmail: values.orgEmail,
                 orgPlan: values.subscriptionTier,
                 orgStatus: "active",
               }),
@@ -582,45 +568,6 @@ const Signing = () => {
                         <span
                           toggle="#password-field"
                           className="toggle-password"
-                        />
-                      </div>
-                      <div className="form-group">
-                        <Field
-                          type="text"
-                          className="form-control"
-                          placeholder="Organization's Name"
-                          name="orgName"
-                        />
-                        <ErrorMessage
-                          name="orgName"
-                          component="div"
-                          className="text-danger"
-                        />
-                      </div>
-                      <div className="form-group">
-                        <Field
-                          type="tel"
-                          className="form-control"
-                          placeholder="Organization's Phone Number"
-                          name="orgPhone"
-                        />
-                        <ErrorMessage
-                          name="orgPhone"
-                          component="div"
-                          className="text-danger"
-                        />
-                      </div>
-                      <div className="form-group">
-                        <Field
-                          type="email"
-                          className="form-control"
-                          placeholder="Organization's Email"
-                          name="orgEmail"
-                        />
-                        <ErrorMessage
-                          name="orgEmail"
-                          component="div"
-                          className="text-danger"
                         />
                       </div>
                       <div className="form-group">
